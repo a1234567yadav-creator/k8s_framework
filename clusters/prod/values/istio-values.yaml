@@ -1,0 +1,9 @@
+istiod:
+  pilot:
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+ingress:
+  service:
+    type: LoadBalancer

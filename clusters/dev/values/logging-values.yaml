@@ -1,0 +1,14 @@
+elasticsearch:
+  replicas: 1
+kibana:
+  service:
+    type: ClusterIP
+fluent-bit:
+  outputs: |
+    [OUTPUT]
+        Name  es
+        Match *
+        Host  elasticsearch-master.logging.svc.cluster.local
+        Port  9200
+        Index fluent-bit
+        Logstash_Format On

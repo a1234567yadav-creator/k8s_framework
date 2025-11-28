@@ -1,0 +1,13 @@
+# Example values for Argo CD
+server:
+  ingress:
+    enabled: true
+    hosts:
+      - argocd.<env>.example.com
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi

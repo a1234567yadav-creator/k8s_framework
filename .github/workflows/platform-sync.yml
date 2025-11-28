@@ -1,0 +1,27 @@
+name: Platform Sync (stubs)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Flux reconcile (example comments)
+        run: |
+          echo "# Example: Flux reconcile per env (requires cluster access)"
+          echo "# flux reconcile kustomization platform-dev --with-source"
+          echo "# flux reconcile kustomization platform-stage --with-source"
+          echo "# flux reconcile kustomization platform-prod --with-source"
+
+      - name: Argo CD app sync (example comments)
+        run: |
+          echo "# Example: Argo CD app sync per env (requires cluster access)"
+          echo "# argocd app sync platform-dev-root"
+          echo "# argocd app sync platform-stage-root"
+          echo "# argocd app sync platform-prod-root"

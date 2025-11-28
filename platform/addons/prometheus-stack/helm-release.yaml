@@ -1,0 +1,26 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: kube-prometheus-stack
+    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/part-of: platform
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+  values:
+    grafana:
+      enabled: true
+      admin:
+        existingSecret: grafana-admin
+    prometheus:
+      prometheusSpec:
+        retention: 7d

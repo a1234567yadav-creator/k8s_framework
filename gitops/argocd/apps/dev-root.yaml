@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-dev-root
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/your-org/k8s-framework.git
+    targetRevision: main
+    path: gitops/flux/cluster-config/dev
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+    syncOptions:
+    - CreateNamespace=true

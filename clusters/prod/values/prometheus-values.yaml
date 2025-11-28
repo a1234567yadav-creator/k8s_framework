@@ -1,0 +1,8 @@
+prometheus:
+  prometheusSpec:
+    retention: 30d
+grafana:
+  ingress:
+    enabled: true
+    hosts:
+      - grafana.prod.example.com

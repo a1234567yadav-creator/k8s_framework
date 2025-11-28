@@ -1,0 +1,6 @@
+# Example values for external-dns
+provider: aws # aws|azure|google
+policy: upsert-only
+txtOwnerId: platform-<env>
+domainFilters:
+  - <env>.example.com

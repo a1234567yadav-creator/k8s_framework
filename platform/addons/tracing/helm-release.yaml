@@ -1,0 +1,22 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: jaeger
+  namespace: tracing
+  labels:
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/part-of: platform
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: jaeger
+      sourceRef:
+        kind: HelmRepository
+        name: jaegertracing
+        namespace: flux-system
+  values:
+    provisionDataStore:
+      cassandra: false
+      elasticsearch: true

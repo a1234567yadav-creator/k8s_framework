@@ -1,0 +1,7 @@
+# Example values for Grafana
+adminUser: admin
+adminPassword: CHANGEME
+ingress:
+  enabled: true
+  hosts:
+    - grafana.<env>.example.com

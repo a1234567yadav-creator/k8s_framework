@@ -1,0 +1,8 @@
+# Example values for Jaeger tracing
+provisionDataStore:
+  elasticsearch: true
+query:
+  ingress:
+    enabled: true
+    hosts:
+      - jaeger.<env>.example.com

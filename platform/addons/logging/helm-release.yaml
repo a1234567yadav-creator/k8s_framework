@@ -1,0 +1,72 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: elasticsearch
+  namespace: logging
+  labels:
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: elasticsearch
+    app.kubernetes.io/part-of: platform
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: elasticsearch
+      sourceRef:
+        kind: HelmRepository
+        name: elastic
+        namespace: flux-system
+  values:
+    replicas: 1
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kibana
+  namespace: logging
+  labels:
+    app.kubernetes.io/name: kibana
+    app.kubernetes.io/instance: kibana
+    app.kubernetes.io/part-of: platform
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: kibana
+      sourceRef:
+        kind: HelmRepository
+        name: elastic
+        namespace: flux-system
+  values:
+    service:
+      type: ClusterIP
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: fluent-bit
+  namespace: logging
+  labels:
+    app.kubernetes.io/name: fluent-bit
+    app.kubernetes.io/instance: fluent-bit
+    app.kubernetes.io/part-of: platform
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: fluent-bit
+      sourceRef:
+        kind: HelmRepository
+        name: fluent
+        namespace: flux-system
+  values:
+    serviceAccount:
+      create: true
+    outputs: |
+      [OUTPUT]
+          Name  es
+          Match *
+          Host  elasticsearch-master.logging.svc.cluster.local
+          Port  9200
+          Index fluent-bit
+          Logstash_Format On

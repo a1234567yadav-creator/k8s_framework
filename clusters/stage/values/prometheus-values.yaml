@@ -1,0 +1,8 @@
+prometheus:
+  prometheusSpec:
+    retention: 14d
+grafana:
+  ingress:
+    enabled: true
+    hosts:
+      - grafana.stage.example.com

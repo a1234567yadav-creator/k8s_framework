@@ -1,0 +1,40 @@
+environments:
+  dev:
+    cloud: eks
+    addons:
+      flux: true
+      argocd: false
+      istio: true
+      ingress: true
+      cert-manager: true
+      external-dns: false
+      prometheus: true
+      grafana: true
+      logging: true
+      tracing: false
+  stage:
+    cloud: aks
+    addons:
+      flux: true
+      argocd: false
+      istio: true
+      ingress: true
+      cert-manager: true
+      external-dns: true
+      prometheus: true
+      grafana: true
+      logging: true
+      tracing: false
+  prod:
+    cloud: gke
+    addons:
+      flux: true
+      argocd: false
+      istio: true
+      ingress: true
+      cert-manager: true
+      external-dns: true
+      prometheus: true
+      grafana: true
+      logging: true
+      tracing: true

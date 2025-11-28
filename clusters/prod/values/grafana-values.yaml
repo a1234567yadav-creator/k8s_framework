@@ -1,0 +1,6 @@
+adminUser: admin
+adminPassword: CHANGEME
+ingress:
+  enabled: true
+  hosts:
+    - grafana.prod.example.com

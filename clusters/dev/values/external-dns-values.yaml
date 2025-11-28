@@ -1,0 +1,5 @@
+provider: aws
+policy: upsert-only
+txtOwnerId: platform-dev
+domainFilters:
+  - dev.example.com

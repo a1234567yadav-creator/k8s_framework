@@ -1,0 +1,58 @@
+name: Platform CI
+
+on:
+  pull_request:
+    paths:
+      - 'platform/**'
+      - 'clusters/**'
+      - 'gitops/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y yamllint
+          curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          sudo install kubectl /usr/local/bin/kubectl
+
+      - name: YAML lint
+        run: |
+          yamllint -d '{extends: default, rules: {line-length: disable}}' .
+
+      - name: Kustomize dry-run base
+        run: |
+          kubectl kustomize platform/base | kubectl apply --dry-run=client -f -
+
+      - name: Helm lint charts with env values
+        run: |
+          helm repo add istio https://istio-release.storage.googleapis.com/charts
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo add external-dns https://kubernetes-sigs.github.io/external-dns/
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add elastic https://helm.elastic.co
+          helm repo add fluent https://fluent.github.io/helm-charts
+          helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+          helm repo update
+          for ENV in dev stage prod; do
+            helm lint istio/istiod -f clusters/$ENV/values/istio-values.yaml || exit 1
+            helm lint istio/gateway -f clusters/$ENV/values/istio-values.yaml || exit 1
+            helm lint ingress-nginx/ingress-nginx -f clusters/$ENV/values/ingress-nginx-values.yaml || exit 1
+            helm lint jetstack/cert-manager -f clusters/$ENV/values/cert-manager-values.yaml || exit 1
+            helm lint prometheus-community/kube-prometheus-stack -f clusters/$ENV/values/prometheus-values.yaml || exit 1
+            helm lint grafana/grafana -f clusters/$ENV/values/grafana-values.yaml || exit 1
+            helm lint elastic/elasticsearch -f clusters/$ENV/values/logging-values.yaml || exit 1
+            helm lint elastic/kibana -f clusters/$ENV/values/logging-values.yaml || exit 1
+            helm lint fluent/fluent-bit -f clusters/$ENV/values/logging-values.yaml || exit 1
+            # Optional charts
+            helm lint external-dns/external-dns -f clusters/$ENV/values/external-dns-values.yaml || true
+            helm lint jaegertracing/jaeger -f clusters/$ENV/values/tracing-values.yaml || true
+          done

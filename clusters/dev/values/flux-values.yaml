@@ -1,0 +1,2 @@
+# Flux has no Helm values here; bootstrap via scripts/bootstrap-flux.sh
+namespace: flux-system

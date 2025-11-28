@@ -1,0 +1,19 @@
+# Example values for kube-prometheus-stack
+prometheus:
+  prometheusSpec:
+    retention: 7d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: default
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+grafana:
+  adminUser: admin
+  adminPassword: CHANGEME
+  ingress:
+    enabled: true
+    hosts:
+      - grafana.<env>.example.com
