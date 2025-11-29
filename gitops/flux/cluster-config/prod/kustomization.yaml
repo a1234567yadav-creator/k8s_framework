@@ -14,6 +14,7 @@ resources:
   - ../../../../platform/base/namespaces/namespaces.yaml
   - ../../../../platform/base/rbac/platform-readonly-rbac.yaml
   - ../../../../platform/base/network-policies/default-deny-example.yaml
+  - ../../../../platform/base/secrets/grafana-admin-secret.yaml
   - ../../../../platform/addons/ingress-nginx/helm-release.yaml
   - ../../../../platform/addons/cert-manager/helm-release.yaml
   - ../../../../platform/addons/istio/helm-release.yaml
