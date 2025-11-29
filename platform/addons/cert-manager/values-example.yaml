@@ -9,3 +9,17 @@ resources:
     memory: 256Mi
 clusterIssuer:
   email: ops@example.com
+securityContext:
+  runAsNonRoot: false
+containerSecurityContext:
+  runAsNonRoot: false
+cainjector:
+  securityContext:
+    runAsNonRoot: false
+  containerSecurityContext:
+    runAsNonRoot: false
+webhook:
+  securityContext:
+    runAsNonRoot: false
+  containerSecurityContext:
+    runAsNonRoot: false

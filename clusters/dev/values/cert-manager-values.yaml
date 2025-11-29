@@ -1,3 +1,17 @@
 installCRDs: true
 clusterIssuer:
   email: ops@dev.example.com
+securityContext:
+  runAsNonRoot: false
+containerSecurityContext:
+  runAsNonRoot: false
+cainjector:
+  securityContext:
+    runAsNonRoot: false
+  containerSecurityContext:
+    runAsNonRoot: false
+webhook:
+  securityContext:
+    runAsNonRoot: false
+  containerSecurityContext:
+    runAsNonRoot: false

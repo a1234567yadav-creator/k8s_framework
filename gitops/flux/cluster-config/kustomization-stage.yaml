@@ -5,8 +5,14 @@ metadata:
   namespace: flux-system
 spec:
   interval: 5m
+  retryInterval: 1m
+  timeout: 5m
+  wait: true
   prune: true
   sourceRef:
     kind: GitRepository
     name: platform-repo
   path: gitops/flux/cluster-config/stage
+  postBuild:
+    substitute:
+      ENV: stage
