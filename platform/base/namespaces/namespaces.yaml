@@ -7,21 +7,21 @@ items:
       name: flux-system
       labels:
         app.kubernetes.io/part-of: platform
-        env: ${ENV}
+        env: placeholder
   - apiVersion: v1
     kind: Namespace
     metadata:
       name: argocd
       labels:
         app.kubernetes.io/part-of: platform
-        env: ${ENV}
+        env: placeholder
   - apiVersion: v1
     kind: Namespace
     metadata:
       name: istio-system
       labels:
         app.kubernetes.io/part-of: platform
-        env: ${ENV}
+        env: placeholder
       annotations:
         istio.io/rev: default
   - apiVersion: v1
@@ -30,39 +30,39 @@ items:
       name: ingress-nginx
       labels:
         app.kubernetes.io/part-of: platform
-        env: ${ENV}
+        env: placeholder
   - apiVersion: v1
     kind: Namespace
     metadata:
       name: cert-manager
       labels:
         app.kubernetes.io/part-of: platform
-        env: ${ENV}
+        env: placeholder
   - apiVersion: v1
     kind: Namespace
     metadata:
       name: external-dns
       labels:
         app.kubernetes.io/part-of: platform
-        env: ${ENV}
+        env: placeholder
   - apiVersion: v1
     kind: Namespace
     metadata:
       name: monitoring
       labels:
         app.kubernetes.io/part-of: platform
-        env: ${ENV}
+        env: placeholder
   - apiVersion: v1
     kind: Namespace
     metadata:
       name: logging
       labels:
         app.kubernetes.io/part-of: platform
-        env: ${ENV}
+        env: placeholder
   - apiVersion: v1
     kind: Namespace
     metadata:
       name: tracing
       labels:
         app.kubernetes.io/part-of: platform
-        env: ${ENV}
+        env: placeholder
