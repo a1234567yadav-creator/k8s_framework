@@ -27,3 +27,6 @@ spec:
             type: prometheus
             access: proxy
             url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local
+service:
+  type: NodePort
+  nodePort: 32000
