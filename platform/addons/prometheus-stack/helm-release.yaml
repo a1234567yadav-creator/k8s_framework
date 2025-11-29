@@ -24,3 +24,6 @@ spec:
     prometheus:
       prometheusSpec:
         retention: 7d
+    kube-prometheus-stack:
+      prometheus-node-exporter:
+        enabled: false
