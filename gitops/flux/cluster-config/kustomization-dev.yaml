@@ -10,4 +10,3 @@ spec:
     kind: GitRepository
     name: platform-repo
   path: gitops/flux/cluster-config/dev
-  targetNamespace: flux-system
