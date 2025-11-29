@@ -32,3 +32,8 @@ spec:
         runAsNonRoot: false
       containerSecurityContext:
         runAsNonRoot: false
+    startupapicheck:
+      securityContext:
+        runAsNonRoot: false
+      containerSecurityContext:
+        runAsNonRoot: false

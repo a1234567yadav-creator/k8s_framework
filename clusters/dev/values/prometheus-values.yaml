@@ -6,3 +6,6 @@ grafana:
     enabled: true
     hosts:
       - grafana.dev.example.com
+kube-prometheus-stack: # to be commited before going live since this is local testing and the application running in hyper v node
+  prometheus-node-exporter:
+    enabled: false

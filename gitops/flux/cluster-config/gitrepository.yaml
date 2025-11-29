@@ -8,6 +8,3 @@ spec:
   url: https://github.com/a1234567yadav-creator/k8s_framework.git
   ref:
     branch: main
-kube-prometheus-stack: # to be commited before going live since this is local testing and the application running in hyper v node
-  prometheus-node-exporter: 
-    enabled: false
