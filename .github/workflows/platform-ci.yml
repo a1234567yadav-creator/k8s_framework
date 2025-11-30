@@ -22,16 +22,20 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
           curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
           sudo install kubectl /usr/local/bin/kubectl
+          # Install kubeconform for offline validation
+          curl -L https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz | tar xz
+          sudo mv kubeconform /usr/local/bin/
 
       # - name: YAML lint
       #   run: |
       #     yamllint -d '{extends: default, rules: {line-length: disable}}' .
 
-      - name: Kustomize dry-run per environment
+      - name: Kustomize build and validate per environment
         run: |
           for env in dev stage prod; do
             echo "Validating $env environment..."
-            kubectl kustomize gitops/flux/cluster-config/$env --load-restrictor=LoadRestrictionsNone | kubectl apply --dry-run=client --validate=false -f -
+            kubectl kustomize gitops/flux/cluster-config/$env --load-restrictor=LoadRestrictionsNone | \
+              kubeconform -strict -ignore-missing-schemas -summary -output json -
           done
 
       - name: Helm lint charts with env values
