@@ -1,7 +1,6 @@
 name: Platform CI
 
 on:
-  workflow_dispatch:
   pull_request:
     paths:
       - 'platform/**'
@@ -68,21 +67,31 @@ jobs:
       - name: Azure login
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.azure }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Pull AKS kubeconfig
-        run: az aks get-credentials -g $AKS_RESOURCE_GROUP -n $AKS_CLUSTER_NAME --file kubeconfig --overwrite-existing
-        env:
-          AKS_RESOURCE_GROUP: ${{ secrets.AKS_RESOURCE_GROUP }}
-          AKS_CLUSTER_NAME: ${{ secrets.AKS_CLUSTER_NAME }}
+        run: az aks get-credentials -g hub -n k8s-framework --overwrite-existing
+
 
       - name: Install Flux CLI (or Helmfile if you prefer)
         run: curl -s https://fluxcd.io/install.sh | sudo bash
 
-      - name: Bootstrap/update Flux
+      - name: Bootstrap Flux (first run)
         env:
           KUBECONFIG: ${{ github.workspace }}/kubeconfig
         run: |
-          flux reconcile source git platform-repo --with-source \
-            || flux create source git platform-repo --url=https://github.com/<org>/<repo>.git --branch=main -n flux-system
-          flux reconcile kustomization platform-dev --with-source -n flux-system
+          # Install Flux controllers if not present
+          flux check --pre || flux install --components-extra=image-reflector-controller,image-automation-controller
+          
+          # Apply GitRepository
+          kubectl apply -f gitops/flux/cluster-config/gitrepository.yaml
+          
+          # Apply environment Kustomization
+          kubectl apply -f gitops/flux/cluster-config/kustomization-${{ inputs.environment }}.yaml
+
+      - name: Reconcile Flux
+        env:
+          KUBECONFIG: ${{ github.workspace }}/kubeconfig
+        run: |
+          flux reconcile source git platform-repo --with-source
+          flux reconcile kustomization platform-${{ inputs.environment }} --with-source
