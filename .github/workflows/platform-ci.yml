@@ -67,7 +67,7 @@ jobs:
       - name: Azure login
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: ${{ secrets.azure }}
 
       - name: Pull AKS kubeconfig
         run: az aks get-credentials -g $AKS_RESOURCE_GROUP -n $AKS_CLUSTER_NAME --file kubeconfig --overwrite-existing
