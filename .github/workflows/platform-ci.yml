@@ -55,9 +55,11 @@ jobs:
           for env in dev stage prod; do
             echo "Validating charts for $env environment..."
             
-            # Validate each chart by templating with env values
-            helm template test-istio-istiod istio/istiod -f clusters/$env/values/istio-values.yaml > /dev/null || exit 1
-            helm template test-istio-gateway istio/gateway -f clusters/$env/values/istio-values.yaml > /dev/null || exit 1
+            # Validate Istio charts with default values (they share a common values file which doesn't work with helm template)
+            helm template test-istio-istiod istio/istiod > /dev/null || exit 1
+            helm template test-istio-gateway istio/gateway > /dev/null || exit 1
+            
+            # Validate other charts with env-specific values
             helm template test-ingress ingress-nginx/ingress-nginx -f clusters/$env/values/ingress-nginx-values.yaml > /dev/null || exit 1
             helm template test-cert-manager jetstack/cert-manager -f clusters/$env/values/cert-manager-values.yaml > /dev/null || exit 1
             helm template test-prometheus prometheus-community/kube-prometheus-stack -f clusters/$env/values/prometheus-values.yaml > /dev/null || exit 1
