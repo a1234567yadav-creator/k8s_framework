@@ -56,3 +56,32 @@ jobs:
             helm lint external-dns/external-dns -f clusters/$ENV/values/external-dns-values.yaml || true
             helm lint jaegertracing/jaeger -f clusters/$ENV/values/tracing-values.yaml || true
           done
+
+  deploy-dev:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Pull AKS kubeconfig
+        run: az aks get-credentials -g $AKS_RESOURCE_GROUP -n $AKS_CLUSTER_NAME --file kubeconfig --overwrite-existing
+        env:
+          AKS_RESOURCE_GROUP: ${{ secrets.AKS_RESOURCE_GROUP }}
+          AKS_CLUSTER_NAME: ${{ secrets.AKS_CLUSTER_NAME }}
+
+      - name: Install Flux CLI (or Helmfile if you prefer)
+        run: curl -s https://fluxcd.io/install.sh | sudo bash
+
+      - name: Bootstrap/update Flux
+        env:
+          KUBECONFIG: ${{ github.workspace }}/kubeconfig
+        run: |
+          flux reconcile source git platform-repo --with-source \
+            || flux create source git platform-repo --url=https://github.com/<org>/<repo>.git --branch=main -n flux-system
+          flux reconcile kustomization platform-dev --with-source -n flux-system
