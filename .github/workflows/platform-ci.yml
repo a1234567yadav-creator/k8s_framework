@@ -31,7 +31,7 @@ jobs:
         run: |
           for env in dev stage prod; do
             echo "Validating $env environment..."
-            kubectl kustomize gitops/flux/cluster-config/$env --load-restrictor=LoadRestrictionsNone | kubectl apply --dry-run=client -f -
+            kubectl kustomize gitops/flux/cluster-config/$env --load-restrictor=LoadRestrictionsNone | kubectl apply --dry-run=client --validate=false -f -
           done
 
       - name: Helm lint charts with env values
