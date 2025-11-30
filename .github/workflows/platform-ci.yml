@@ -27,9 +27,12 @@ jobs:
       #   run: |
       #     yamllint -d '{extends: default, rules: {line-length: disable}}' .
 
-      - name: Kustomize dry-run base
+      - name: Kustomize dry-run per environment
         run: |
-          kubectl kustomize platform/base | kubectl apply --dry-run=client -f -
+          for env in dev stage prod; do
+            echo "Validating $env environment..."
+            kubectl kustomize gitops/flux/cluster-config/$env | kubectl apply --dry-run=client -f -
+          done
 
       - name: Helm lint charts with env values
         run: |
@@ -78,8 +81,6 @@ jobs:
         run: curl -s https://fluxcd.io/install.sh | sudo bash
 
       - name: Bootstrap Flux (first run)
-        env:
-          KUBECONFIG: ${{ github.workspace }}/kubeconfig
         run: |
           # Install Flux controllers if not present
           flux check --pre || flux install --components-extra=image-reflector-controller,image-automation-controller
@@ -88,11 +89,9 @@ jobs:
           kubectl apply -f gitops/flux/cluster-config/gitrepository.yaml
           
           # Apply environment Kustomization
-          kubectl apply -f gitops/flux/cluster-config/kustomization-${{ inputs.environment }}.yaml
+          kubectl apply -f gitops/flux/cluster-config/kustomization-dev.yaml
 
       - name: Reconcile Flux
-        env:
-          KUBECONFIG: ${{ github.workspace }}/kubeconfig
         run: |
           flux reconcile source git platform-repo --with-source
-          flux reconcile kustomization platform-${{ inputs.environment }} --with-source
+          flux reconcile kustomization platform-dev --with-source
