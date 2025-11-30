@@ -1,3 +1,4 @@
+---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
@@ -8,3 +9,4 @@ spec:
   url: https://github.com/a1234567yadav-creator/k8s_framework.git
   ref:
     branch: main
+
