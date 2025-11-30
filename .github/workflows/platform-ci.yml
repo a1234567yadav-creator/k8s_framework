@@ -68,7 +68,7 @@ jobs:
       - name: Azure login
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: ${{ secrets.AZURE }}
 
       - name: Pull AKS kubeconfig
         run: az aks get-credentials -g hub -n k8s-framework --overwrite-existing
