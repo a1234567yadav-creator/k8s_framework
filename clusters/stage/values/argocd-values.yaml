@@ -1,5 +1,7 @@
+---
 server:
   ingress:
     enabled: true
     hosts:
       - argocd.stage.example.com
+
