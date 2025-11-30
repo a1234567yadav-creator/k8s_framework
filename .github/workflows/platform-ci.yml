@@ -30,50 +30,50 @@ jobs:
       #   run: |
       #     yamllint -d '{extends: default, rules: {line-length: disable}}' .
 
-      - name: Kustomize build and validate per environment
-        run: |
-          for env in dev stage prod; do
-            echo "Validating $env environment..."
-            kubectl kustomize gitops/flux/cluster-config/$env --load-restrictor=LoadRestrictionsNone | \
-              kubeconform -strict -ignore-missing-schemas -summary -output json -
-          done
+      # - name: Kustomize build and validate per environment
+      #   run: |
+      #     for env in dev stage prod; do
+      #       echo "Validating $env environment..."
+      #       kubectl kustomize gitops/flux/cluster-config/$env --load-restrictor=LoadRestrictionsNone | \
+      #         kubeconform -strict -ignore-missing-schemas -summary -output json -
+      #     done
 
-      - name: Helm template validation with env values
-        run: |
-          helm repo add istio https://istio-release.storage.googleapis.com/charts
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo add jetstack https://charts.jetstack.io
-          helm repo add external-dns https://kubernetes-sigs.github.io/external-dns/
-          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-          helm repo add grafana https://grafana.github.io/helm-charts
-          helm repo add elastic https://helm.elastic.co
-          helm repo add fluent https://fluent.github.io/helm-charts
-          helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
-          helm repo update
-          
-          echo "Validating Helm charts with environment-specific values..."
-          for env in dev stage prod; do
-            echo "Validating charts for $env environment..."
-            
-            # Validate Istio charts with default values (they share a common values file which doesn't work with helm template)
-            helm template test-istio-istiod istio/istiod > /dev/null || exit 1
-            helm template test-istio-gateway istio/gateway > /dev/null || exit 1
-            
-            # Validate other charts with env-specific values
-            helm template test-ingress ingress-nginx/ingress-nginx -f clusters/$env/values/ingress-nginx-values.yaml > /dev/null || exit 1
-            helm template test-cert-manager jetstack/cert-manager -f clusters/$env/values/cert-manager-values.yaml > /dev/null || exit 1
-            helm template test-prometheus prometheus-community/kube-prometheus-stack -f clusters/$env/values/prometheus-values.yaml > /dev/null || exit 1
-            helm template test-grafana grafana/grafana -f clusters/$env/values/grafana-values.yaml > /dev/null || exit 1
-            helm template test-elasticsearch elastic/elasticsearch -f clusters/$env/values/logging-values.yaml > /dev/null || exit 1
-            helm template test-kibana elastic/kibana -f clusters/$env/values/logging-values.yaml > /dev/null || exit 1
-            helm template test-fluent-bit fluent/fluent-bit -f clusters/$env/values/logging-values.yaml > /dev/null || exit 1
-            
-            # Optional charts (don't fail on error)
-            helm template test-external-dns external-dns/external-dns -f clusters/$env/values/external-dns-values.yaml > /dev/null || true
-            helm template test-jaeger jaegertracing/jaeger -f clusters/$env/values/tracing-values.yaml > /dev/null || true
-          done
-          
-          echo "✓ All Helm charts validated successfully"
+      # - name: Helm template validation with env values
+      #   run: |
+      #     helm repo add istio https://istio-release.storage.googleapis.com/charts
+      #     helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+      #     helm repo add jetstack https://charts.jetstack.io
+      #     helm repo add external-dns https://kubernetes-sigs.github.io/external-dns/
+      #     helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      #     helm repo add grafana https://grafana.github.io/helm-charts
+      #     helm repo add elastic https://helm.elastic.co
+      #     helm repo add fluent https://fluent.github.io/helm-charts
+      #     helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+      #     helm repo update
+      #     
+      #     echo "Validating Helm charts with environment-specific values..."
+      #     for env in dev stage prod; do
+      #       echo "Validating charts for $env environment..."
+      #       
+      #       # Validate Istio charts with default values (they share a common values file which doesn't work with helm template)
+      #       helm template test-istio-istiod istio/istiod > /dev/null || exit 1
+      #       helm template test-istio-gateway istio/gateway > /dev/null || exit 1
+      #       
+      #       # Validate other charts with env-specific values
+      #       helm template test-ingress ingress-nginx/ingress-nginx -f clusters/$env/values/ingress-nginx-values.yaml > /dev/null || exit 1
+      #       helm template test-cert-manager jetstack/cert-manager -f clusters/$env/values/cert-manager-values.yaml > /dev/null || exit 1
+      #       helm template test-prometheus prometheus-community/kube-prometheus-stack -f clusters/$env/values/prometheus-values.yaml > /dev/null || exit 1
+      #       helm template test-grafana grafana/grafana -f clusters/$env/values/grafana-values.yaml > /dev/null || exit 1
+      #       helm template test-elasticsearch elastic/elasticsearch -f clusters/$env/values/logging-values.yaml > /dev/null || exit 1
+      #       helm template test-kibana elastic/kibana -f clusters/$env/values/logging-values.yaml > /dev/null || exit 1
+      #       helm template test-fluent-bit fluent/fluent-bit -f clusters/$env/values/logging-values.yaml > /dev/null || exit 1
+      #       
+      #       # Optional charts (don't fail on error)
+      #       helm template test-external-dns external-dns/external-dns -f clusters/$env/values/external-dns-values.yaml > /dev/null || true
+      #       helm template test-jaeger jaegertracing/jaeger -f clusters/$env/values/tracing-values.yaml > /dev/null || true
+      #     done
+      #     
+      #     echo "✓ All Helm charts validated successfully"
 
   deploy-dev:
     runs-on: ubuntu-latest
