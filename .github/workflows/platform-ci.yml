@@ -96,7 +96,7 @@ jobs:
           curl -s https://fluxcd.io/install.sh | sudo bash
           flux --version
 
-      - name: Bootstrap Flux (first run)
+      - name: Bootstrap Flux
         run: |
           # Check if Flux is already installed
           if ! flux check > /dev/null 2>&1; then
@@ -114,10 +114,7 @@ jobs:
           # Apply GitRepository
           kubectl apply -f gitops/flux/cluster-config/gitrepository.yaml
           
-          # Apply environment Kustomization
+          # Apply environment Kustomization (Flux will reconcile automatically)
           kubectl apply -f gitops/flux/cluster-config/kustomization-dev.yaml
-
-      - name: Reconcile Flux
-        run: |
-          # Reconcile the Kustomization (this will also reconcile the source)
-          flux reconcile kustomization platform-dev --with-source
+          
+          echo "✅ Flux bootstrap complete. Resources will be reconciled automatically."

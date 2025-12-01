@@ -6,22 +6,49 @@ on:
       - main
 
 jobs:
-  sync:
+  sync-dev:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Flux reconcile (example comments)
-        run: |
-          echo "# Example: Flux reconcile per env (requires cluster access)"
-          echo "# flux reconcile kustomization platform-dev --with-source"
-          echo "# flux reconcile kustomization platform-stage --with-source"
-          echo "# flux reconcile kustomization platform-prod --with-source"
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE }}
 
-      - name: Argo CD app sync (example comments)
+      - name: Pull AKS kubeconfig
+        run: az aks get-credentials -g hub -n k8s-framework --overwrite-existing
+
+      - name: Install Flux CLI
         run: |
-          echo "# Example: Argo CD app sync per env (requires cluster access)"
-          echo "# argocd app sync platform-dev-root"
-          echo "# argocd app sync platform-stage-root"
-          echo "# argocd app sync platform-prod-root"
+          curl -s https://fluxcd.io/install.sh | sudo bash
+          flux --version
+
+      - name: Reconcile Flux for dev
+        run: |
+          echo "Triggering Flux reconciliation for dev environment..."
+          flux reconcile kustomization platform-dev --with-source
+          
+          echo "✅ Dev environment sync triggered"
+
+  # Uncomment for stage/prod when ready
+  # sync-stage:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     
+  #     - name: Azure login
+  #       uses: azure/login@v2
+  #       with:
+  #         creds: ${{ secrets.AZURE_STAGE }}
+  #     
+  #     - name: Pull AKS kubeconfig
+  #       run: az aks get-credentials -g <resource-group> -n <cluster-name> --overwrite-existing
+  #     
+  #     - name: Install Flux CLI
+  #       run: curl -s https://fluxcd.io/install.sh | sudo bash
+  #     
+  #     - name: Reconcile Flux for stage
+  #       run: flux reconcile kustomization platform-stage --with-source
