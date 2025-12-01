@@ -27,33 +27,6 @@ spec:
       valuesKey: values.yaml
       optional: true
   values:
-    backstage:
-      image:
-        repository: backstage/backstage
-        tag: latest
-      resources:
-        requests:
-          cpu: 100m    # Optimized for 4-core constraint
-          memory: 256Mi
-        limits:
-          cpu: 200m
-          memory: 512Mi
-      
-      # Environment variables for Backstage configuration
-      extraEnvVars:
-        - name: NODE_ENV
-          value: "development"
-        - name: LOG_LEVEL
-          value: "info"
-        
-        # Platform integration
-        - name: KUBERNETES_CLUSTER_NAME
-          value: "k8s-framework"
-        - name: PROMETHEUS_URL
-          value: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090"
-        - name: GRAFANA_URL
-          value: "http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local"
-    
     # Disable PostgreSQL dependency
     postgresql:
       enabled: false
@@ -62,11 +35,3 @@ spec:
     service:
       type: ClusterIP
       port: 7007
-      
-    # Ingress configuration (we'll use Istio instead)
-    ingress:
-      enabled: false
-      
-    # Service monitoring
-    serviceMonitor:
-      enabled: true
