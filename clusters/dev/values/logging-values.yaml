@@ -1,8 +1,22 @@
 elasticsearch:
   replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
 kibana:
   service:
     type: ClusterIP
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
 fluent-bit:
   outputs: |
     [OUTPUT]
