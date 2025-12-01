@@ -43,23 +43,12 @@ spec:
       resources:
         requests:
           storage: 5Gi
-    # Enable HTTPS with auto-generated self-signed certs (best practice)
+    # Use official chart defaults: HTTPS with auto-generated certs
     protocol: https
-    esConfig:
-      elasticsearch.yml: |
-        xpack.security.enabled: true
-        xpack.security.enrollment.enabled: true
-        # HTTP layer SSL using auto-generated certs
-        xpack.security.http.ssl.enabled: true
-        # Transport layer SSL using auto-generated certs
-        xpack.security.transport.ssl.enabled: true
-        xpack.security.transport.ssl.verification_mode: certificate
-    # Create default elastic user with password
+    createCert: true
     secret:
       enabled: true
-      password: "changeme"  # Change in production via sealed secrets
-    # Let chart generate certificates automatically
-    createCert: true
+      password: "changeme"  # Change in production
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -105,17 +94,11 @@ spec:
       limits:
         cpu: 200m
         memory: 512Mi
-    # Connect to Elasticsearch with HTTPS
-    elasticsearchHosts: "https://elasticsearch-master.logging.svc.cluster.local:9200"
-    # Use Elasticsearch credentials
-    elasticsearchCredentialSecret: "elasticsearch-master-credentials"
-    # Trust the self-signed Elasticsearch certificates
+    # Official chart defaults for connecting to Elasticsearch
+    elasticsearchHosts: "https://elasticsearch-master:9200"
     elasticsearchCertificateSecret: "elasticsearch-master-certs"
     elasticsearchCertificateAuthoritiesFile: "ca.crt"
-    # Override environment variables for authentication
-    extraEnvs:
-      - name: ELASTICSEARCH_SSL_VERIFICATIONMODE
-        value: "certificate"
+    elasticsearchCredentialSecret: "elasticsearch-master-credentials"
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
