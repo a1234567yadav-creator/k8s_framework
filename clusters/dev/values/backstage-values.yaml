@@ -2,10 +2,15 @@
 # Optimized for 4-core constraint
 
 postgresql:
+  image:
+    tag: "15.8.0-debian-12-r5"  # Use available PostgreSQL 15.x version
   auth:
     postgresPassword: "dev-backstage-secret"
     password: "dev-backstage-secret"
     database: "backstage_catalog_dev"
+  # Disable metrics to avoid image pull issues
+  metrics:
+    enabled: false
   primary:
     resources:
       requests:
