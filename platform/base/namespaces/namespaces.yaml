@@ -18,6 +18,14 @@ items:
   - apiVersion: v1
     kind: Namespace
     metadata:
+      name: backstage
+      labels:
+        app.kubernetes.io/part-of: platform
+        env: placeholder
+        istio-injection: enabled  # Enable Istio sidecar injection
+  - apiVersion: v1
+    kind: Namespace
+    metadata:
       name: istio-system
       labels:
         app.kubernetes.io/part-of: platform

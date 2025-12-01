@@ -1,0 +1,62 @@
+# Istio Gateway and VirtualService for Backstage
+# This provides external access to Backstage through Istio Ingress Gateway
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: backstage-gateway
+  namespace: backstage
+spec:
+  selector:
+    istio: ingress
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - backstage.dev.k8s-framework.local
+    - backstage.k8s-framework.local
+    - "*"  # Allow all hosts for dev (restrict in production)
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: backstage-vs
+  namespace: backstage
+spec:
+  hosts:
+  - backstage.dev.k8s-framework.local
+  - backstage.k8s-framework.local
+  - "*"
+  gateways:
+  - backstage-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: backstage.backstage.svc.cluster.local
+        port:
+          number: 7007
+
+---
+# DestinationRule for Backstage service mesh configuration  
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: backstage-dr
+  namespace: backstage
+spec:
+  host: backstage.backstage.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      simple: LEAST_CONN
+    connectionPool:
+      tcp:
+        maxConnections: 10
+      http:
+        http1MaxPendingRequests: 10
+        maxRequestsPerConnection: 2

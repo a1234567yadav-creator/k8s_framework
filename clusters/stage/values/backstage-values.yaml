@@ -1,0 +1,93 @@
+# Backstage Configuration for Stage Environment
+# Resource optimized for 4-core total cluster constraint
+app:
+  title: "Platform Developer Portal - Stage"
+  baseUrl: http://backstage-stage.local # Update with your actual domain
+  
+  # Resource configuration
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+    limits:
+      memory: 512Mi
+      cpu: 200m
+
+backend:
+  baseUrl: http://backstage-stage.local
+  cors:
+    origin: http://backstage-stage.local
+
+  # PostgreSQL configuration
+  database:
+    client: pg
+    connection:
+      host: backstage-postgresql
+      port: 5432
+      user: backstage
+      password: changeme123
+      database: backstage
+
+# Service configuration
+service:
+  type: ClusterIP
+  ports:
+    backend: 7007
+    name: http-backend
+
+# PostgreSQL dependency configuration
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "changeme123"
+    username: "backstage"
+    password: "changeme123"
+    database: "backstage"
+  
+  # Resource optimization for stage
+  primary:
+    resources:
+      requests:
+        memory: 128Mi
+        cpu: 50m
+      limits:
+        memory: 256Mi
+        cpu: 100m
+    
+    persistence:
+      enabled: true
+      size: 2Gi
+
+# Platform integrations
+app_config:
+  app:
+    title: "Platform Developer Portal - Stage"
+    baseUrl: http://backstage-stage.local
+  
+  backend:
+    baseUrl: http://backstage-stage.local
+    cors:
+      origin: http://backstage-stage.local
+  
+  # Kubernetes integration
+  kubernetes:
+    serviceLocatorMethod:
+      type: 'multiTenant'
+    clusterLocatorMethods:
+      - type: 'config'
+        clusters:
+          - url: https://kubernetes.default.svc.cluster.local
+            name: stage-cluster
+            authProvider: 'serviceAccount'
+            skipTLSVerify: true
+            skipMetricsLookup: false
+  
+  # Platform service integrations
+  proxy:
+    '/prometheus/api':
+      target: 'http://prometheus-server.monitoring.svc.cluster.local'
+      changeOrigin: true
+    
+    '/grafana/api':
+      target: 'http://grafana.monitoring.svc.cluster.local'
+      changeOrigin: true

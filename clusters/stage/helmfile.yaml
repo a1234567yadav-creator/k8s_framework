@@ -19,6 +19,10 @@ repositories:
     url: https://fluent.github.io/helm-charts
   - name: jaegertracing
     url: https://jaegertracing.github.io/helm-charts
+  - name: backstage
+    url: https://backstage.github.io/charts
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
 
 helmDefaults:
   wait: true
@@ -82,3 +86,8 @@ releases:
     installed: false
     values:
       - values/argocd-values.yaml
+  - name: backstage
+    namespace: backstage
+    chart: backstage/backstage
+    values:
+      - values/backstage-values.yaml

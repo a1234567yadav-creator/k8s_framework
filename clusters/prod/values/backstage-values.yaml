@@ -1,0 +1,106 @@
+# Backstage Configuration for Production Environment
+# Production-ready configuration with higher resource allocation
+app:
+  title: "Platform Developer Portal - Production"
+  baseUrl: https://backstage.example.com # Update with your actual domain
+  
+  # Production resource configuration
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 200m
+    limits:
+      memory: 1Gi
+      cpu: 500m
+
+backend:
+  baseUrl: https://backstage.example.com
+  cors:
+    origin: https://backstage.example.com
+
+  # PostgreSQL configuration
+  database:
+    client: pg
+    connection:
+      host: backstage-postgresql
+      port: 5432
+      user: backstage
+      password: secure-production-password # Use secrets in real deployment
+      database: backstage
+
+# Service configuration
+service:
+  type: ClusterIP
+  ports:
+    backend: 7007
+    name: http-backend
+
+# PostgreSQL dependency configuration
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "secure-production-password" # Use secrets in real deployment
+    username: "backstage"
+    password: "secure-production-password"
+    database: "backstage"
+  
+  # Production resources
+  primary:
+    resources:
+      requests:
+        memory: 512Mi
+        cpu: 100m
+      limits:
+        memory: 1Gi
+        cpu: 200m
+    
+    persistence:
+      enabled: true
+      size: 10Gi
+
+# High availability configuration
+replicaCount: 2
+
+# Platform integrations
+app_config:
+  app:
+    title: "Platform Developer Portal - Production"
+    baseUrl: https://backstage.example.com
+  
+  backend:
+    baseUrl: https://backstage.example.com
+    cors:
+      origin: https://backstage.example.com
+  
+  # Kubernetes integration
+  kubernetes:
+    serviceLocatorMethod:
+      type: 'multiTenant'
+    clusterLocatorMethods:
+      - type: 'config'
+        clusters:
+          - url: https://kubernetes.default.svc.cluster.local
+            name: production-cluster
+            authProvider: 'serviceAccount'
+            skipTLSVerify: false
+            skipMetricsLookup: false
+  
+  # Platform service integrations
+  proxy:
+    '/prometheus/api':
+      target: 'http://prometheus-server.monitoring.svc.cluster.local'
+      changeOrigin: true
+    
+    '/grafana/api':
+      target: 'http://grafana.monitoring.svc.cluster.local'
+      changeOrigin: true
+  
+  # Additional production integrations
+  auth:
+    environment: production
+    providers:
+      # Configure OAuth providers in production
+      github:
+        development:
+          clientId: ${AUTH_GITHUB_CLIENT_ID}
+          clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}

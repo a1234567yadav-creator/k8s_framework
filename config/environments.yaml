@@ -12,6 +12,7 @@ environments:
       grafana: true
       logging: true
       tracing: false
+      backstage: true
   stage:
     cloud: aks
     addons:
@@ -25,6 +26,7 @@ environments:
       grafana: true
       logging: true
       tracing: false
+      backstage: true
   prod:
     cloud: gke
     addons:
@@ -38,3 +40,4 @@ environments:
       grafana: true
       logging: true
       tracing: true
+      backstage: true

@@ -11,6 +11,8 @@ resources:
   - ../sources/helm/elastic.yaml
   - ../sources/helm/fluent.yaml
   - ../sources/helm/jaegertracing.yaml
+  - ../sources/helm/backstage.yaml
+  - ../sources/helm/bitnami.yaml
   - ../../../../platform/base/namespaces/namespaces.yaml
   - ../../../../platform/base/rbac/platform-readonly-rbac.yaml
   - ../../../../platform/base/network-policies/default-deny-example.yaml
@@ -21,3 +23,4 @@ resources:
   - ../../../../platform/addons/prometheus-stack/helm-release.yaml
   - ../../../../platform/addons/grafana/helm-release.yaml
   - ../../../../platform/addons/logging/helm-release.yaml
+  - ../../../../platform/addons/backstage/helm-release.yaml

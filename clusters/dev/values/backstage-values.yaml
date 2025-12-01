@@ -1,0 +1,76 @@
+# Backstage development environment configuration
+# Optimized for 4-core constraint
+
+postgresql:
+  auth:
+    postgresPassword: "dev-backstage-secret"
+    password: "dev-backstage-secret"
+    database: "backstage_catalog_dev"
+  primary:
+    resources:
+      requests:
+        cpu: 50m    # Reduced for dev
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+    persistence:
+      size: 1Gi     # Smaller for dev
+
+backstage:
+  resources:
+    requests:
+      cpu: 100m     # Reduced for dev
+      memory: 256Mi
+    limits:
+      cpu: 300m
+      memory: 512Mi
+  
+  # Dev-specific environment variables
+  extraEnvVars:
+    - name: NODE_ENV
+      value: "development"
+    - name: LOG_LEVEL
+      value: "debug"
+    
+    # Platform integration URLs
+    - name: PROMETHEUS_URL
+      value: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090"
+    - name: GRAFANA_URL  
+      value: "http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local"
+    - name: GRAFANA_EXTERNAL_URL
+      value: "http://4.187.230.65/grafana"  # Using ingress external IP
+      
+    # Kubernetes cluster info
+    - name: KUBERNETES_CLUSTER_NAME
+      value: "k8s-framework-dev"
+    - name: KUBERNETES_CLUSTER_URL
+      value: "https://kubernetes.default.svc"
+      
+    # GitHub integration (placeholder)
+    - name: GITHUB_TOKEN
+      value: "placeholder-for-github-token"
+    - name: BACKSTAGE_BASE_URL
+      value: "http://backstage.dev.k8s-framework.local"
+
+  # Additional configuration for dev
+  appConfig:
+    app:
+      title: "K8s Framework Developer Portal"
+      baseUrl: "http://backstage.dev.k8s-framework.local"
+    
+    backend:
+      baseUrl: "http://backstage.dev.k8s-framework.local"
+      cors:
+        origin: "http://backstage.dev.k8s-framework.local"
+    
+    kubernetes:
+      serviceLocatorMethod:
+        type: 'multiTenant'
+      clusterLocatorMethods:
+        - type: 'config'
+          clusters:
+            - url: 'https://kubernetes.default.svc'
+              name: k8s-framework-dev
+              authProvider: 'serviceAccount'
+              skipTLSVerify: true
