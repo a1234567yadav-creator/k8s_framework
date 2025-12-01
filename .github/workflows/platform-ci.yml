@@ -100,8 +100,8 @@ jobs:
         run: |
           # Check if Flux is already installed
           if ! flux check > /dev/null 2>&1; then
-            echo "Installing Flux..."
-            flux install --components-extra=image-reflector-controller,image-automation-controller
+            echo "Installing Flux v2.7.5..."
+            flux install --version=v2.7.5
           else
             echo "Flux is already installed"
           fi
