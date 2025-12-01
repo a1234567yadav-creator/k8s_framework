@@ -12,6 +12,7 @@ spec:
   chart:
     spec:
       chart: istiod
+      version: 1.28.0
       sourceRef:
         kind: HelmRepository
         name: istio
@@ -34,10 +35,22 @@ spec:
   chart:
     spec:
       chart: gateway
+      version: 1.28.0
       sourceRef:
         kind: HelmRepository
         name: istio
         namespace: flux-system
   values:
+    # Fix the image issue by providing proper values
+    image:
+      repository: istio/proxyv2
+      tag: 1.28.0
     service:
       type: LoadBalancer
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
