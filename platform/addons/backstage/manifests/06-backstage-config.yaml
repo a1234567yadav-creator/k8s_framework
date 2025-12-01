@@ -1,0 +1,52 @@
+# Backstage ConfigMap for app configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backstage-app-config
+  namespace: backstage
+data:
+  app-config.yaml: |
+    app:
+      title: K8s Framework Developer Portal
+      baseUrl: http://backstage.backstage.svc.cluster.local:7007
+      
+    organization:
+      name: K8s Framework Platform
+      
+    backend:
+      baseUrl: http://backstage.backstage.svc.cluster.local:7007
+      listen:
+        port: 7007
+        host: 0.0.0.0
+      cors:
+        origin: http://backstage.backstage.svc.cluster.local:7007
+        credentials: true
+      database:
+        client: pg
+        connection:
+          host: ${POSTGRES_HOST}
+          port: ${POSTGRES_PORT}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          database: ${POSTGRES_DB}
+    
+    # Basic catalog configuration
+    catalog:
+      rules:
+        - allow: [Component, System, API, Resource, Location]
+      locations:
+        - type: file
+          target: ../../examples/entities.yaml
+          
+    # Kubernetes integration
+    kubernetes:
+      serviceLocatorMethod:
+        type: 'multiTenant'
+      clusterLocatorMethods:
+        - type: 'config'
+          clusters:
+            - url: https://kubernetes.default.svc
+              name: k8s-framework
+              authProvider: 'serviceAccount'
+              skipTLSVerify: true
+              skipMetricsLookup: false

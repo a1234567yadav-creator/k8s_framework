@@ -1,0 +1,9 @@
+# Basic Backstage Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: backstage
+  labels:
+    name: backstage
+    app.kubernetes.io/part-of: platform
+    istio-injection: enabled  # Enable Istio sidecar injection

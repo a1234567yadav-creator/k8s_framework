@@ -1,0 +1,12 @@
+# PostgreSQL Storage - Using dynamic storage class
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-storage-claim
+  namespace: backstage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi  # Minimal for dev environment

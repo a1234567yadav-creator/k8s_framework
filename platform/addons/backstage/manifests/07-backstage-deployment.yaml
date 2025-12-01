@@ -1,0 +1,63 @@
+# Backstage Deployment using official image
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backstage
+  namespace: backstage
+  labels:
+    app: backstage
+    app.kubernetes.io/part-of: backstage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backstage
+  template:
+    metadata:
+      labels:
+        app: backstage
+    spec:
+      serviceAccountName: backstage
+      containers:
+        - name: backstage
+          image: spotify/backstage:latest  # Using Spotify's official demo image
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 7007
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: postgres-secrets
+            - secretRef:
+                name: backstage-secrets
+          env:
+            - name: APP_CONFIG_app_baseUrl
+              value: "http://backstage.backstage.svc.cluster.local:7007"
+            - name: APP_CONFIG_backend_baseUrl  
+              value: "http://backstage.backstage.svc.cluster.local:7007"
+          resources:
+            requests:
+              cpu: 100m    # Optimized for 4-core constraint
+              memory: 256Mi
+            limits:
+              cpu: 200m
+              memory: 512Mi
+          # Add health checks when ready
+          # readinessProbe:
+          #   httpGet:
+          #     port: 7007
+          #     path: /healthcheck
+          # livenessProbe:
+          #   httpGet:
+          #     port: 7007
+          #     path: /healthcheck
+          volumeMounts:
+            - name: app-config
+              mountPath: /app/app-config.yaml
+              subPath: app-config.yaml
+              readOnly: true
+      volumes:
+        - name: app-config
+          configMap:
+            name: backstage-app-config
