@@ -30,13 +30,8 @@ spec:
     remediation:
       retries: 3
   values:
-    # Single node for minimal footprint
+    # Single node for minimal footprint - use only minimal settings
     replicas: 1
-    # Don't set minimumMasterNodes when using single-node discovery
-    # minimumMasterNodes: 1
-    
-    # Relaxed health check for single node
-    clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
     
     # Minimal JVM heap for 4-core constraint
     esJavaOpts: "-Xmx256m -Xms256m"
@@ -57,14 +52,12 @@ spec:
         requests:
           storage: 2Gi
     
-    # Disable security for dev (enable in prod)
-    # Official recommendation: Use security.enabled=false only for non-production
-    # Docs: https://github.com/elastic/helm-charts/blob/main/elasticsearch/README.md#security
-    extraEnvs:
-      - name: xpack.security.enabled
-        value: "false"
-      - name: discovery.type
-        value: "single-node"
+    # Use elasticsearch config to set single-node and disable security
+    esConfig:
+      elasticsearch.yml: |
+        discovery.type: single-node
+        xpack.security.enabled: false
+        network.host: 0.0.0.0
 ---
 # Kibana - Minimal configuration
 # Official docs: https://github.com/elastic/helm-charts/tree/main/kibana
