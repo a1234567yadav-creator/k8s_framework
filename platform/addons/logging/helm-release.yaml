@@ -32,7 +32,8 @@ spec:
   values:
     # Single node for minimal footprint
     replicas: 1
-    minimumMasterNodes: 1
+    # Don't set minimumMasterNodes when using single-node discovery
+    # minimumMasterNodes: 1
     
     # Relaxed health check for single node
     clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
