@@ -21,6 +21,3 @@ resources:
   - ../../../../platform/addons/prometheus-stack/helm-release.yaml
   - ../../../../platform/addons/grafana/helm-release.yaml
   - ../../../../platform/addons/logging/helm-release.yaml
-
-patchesStrategicMerge:
-  - logging-patch.yaml

@@ -9,15 +9,47 @@ metadata:
     app.kubernetes.io/part-of: platform
 spec:
   interval: 10m
+  timeout: 10m
   chart:
     spec:
       chart: elasticsearch
+      version: '8.5.1'
       sourceRef:
         kind: HelmRepository
         name: elastic
         namespace: flux-system
-  # Values will be patched per environment via Kustomize
-  values: {}
+      interval: 5m
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    replicas: 1
+    minimumMasterNodes: 1
+    clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
+    esJavaOpts: "-Xmx512m -Xms512m"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    volumeClaimTemplate:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 5Gi
+    # Disable security completely for dev
+    esConfig:
+      elasticsearch.yml: |
+        xpack.security.enabled: false
+        xpack.security.enrollment.enabled: false
+        xpack.security.http.ssl.enabled: false
+        xpack.security.transport.ssl.enabled: false
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -30,15 +62,33 @@ metadata:
     app.kubernetes.io/part-of: platform
 spec:
   interval: 10m
+  timeout: 10m
   chart:
     spec:
       chart: kibana
+      version: '8.5.1'
       sourceRef:
         kind: HelmRepository
         name: elastic
         namespace: flux-system
-  # Values will be patched per environment via Kustomize
-  values: {}
+      interval: 5m
+  install:
+    createNamespace: false
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    service:
+      type: ClusterIP
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        cpu: 200m
+        memory: 512Mi
+    # Connect to Elasticsearch without security
+    elasticsearchHosts: "http://elasticsearch-master.logging.svc.cluster.local:9200"
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -54,9 +104,31 @@ spec:
   chart:
     spec:
       chart: fluent-bit
+      version: '0.21.7'
       sourceRef:
         kind: HelmRepository
         name: fluent
         namespace: flux-system
-  # Values will be patched per environment via Kustomize
-  values: {}
+      interval: 5m
+  install:
+    createNamespace: false
+  values:
+    serviceAccount:
+      create: true
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+    config:
+      outputs: |
+        [OUTPUT]
+            Name  es
+            Match *
+            Host  elasticsearch-master.logging.svc.cluster.local
+            Port  9200
+            Index fluent-bit
+            Logstash_Format On
+            Retry_Limit False
