@@ -41,10 +41,6 @@ spec:
         name: istio
         namespace: flux-system
   values:
-    # Fix the image issue by providing proper values
-    image:
-      repository: istio/proxyv2
-      tag: 1.28.0
     service:
       type: LoadBalancer
     resources:
