@@ -30,7 +30,7 @@ These rules make an AI agent immediately productive in this repository. The repo
 **Service Mesh & Observability**
 - Istio: Install via official charts with opt‑in injection (`istio-injection=enabled`). Include example `VirtualService`/`Gateway` in `platform/addons/istio/examples/`.
 - Monitoring: Prefer `kube-prometheus-stack` (Prometheus + Alertmanager). Grafana values preload a Prometheus datasource and admin from a Kubernetes secret.
-- Logging: Elasticsearch (default) or OpenSearch + Fluent Bit + Kibana with storage/retention placeholders. Tracing (Jaeger/Tempo) optional.
+- Logging: Elasticsearch (default) or OpenSearch + Fluent Bit + Kibana with storage/retention placeholders. **Important:** Kibana requires `kibana-kibana-es-token` secret created in `platform/base/secrets` before installation to avoid pre-install hook conflicts during Flux retries. Tracing (Jaeger/Tempo) optional.
 
 **CI & Validation**
 - `.github/workflows/platform-ci.yml`: On PRs touching `platform/**`, `clusters/**`, `gitops/**`, run `yamllint`, schema/dry‑run validation (e.g., `kubectl apply --dry-run=client`), and `helm lint` for each addon + values combo. Fail on any errors.
