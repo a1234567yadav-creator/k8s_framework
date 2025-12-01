@@ -23,6 +23,6 @@ resources:
   - ../../../../platform/addons/prometheus-stack/helm-release.yaml
   - ../../../../platform/addons/grafana/helm-release.yaml
   - ../../../../platform/addons/logging/helm-release.yaml
-  - ../../../../platform/addons/backstage/helm-release.yaml
+  - ../../../../platform/addons/backstage/kustomization.yaml
   - ../../../../platform/addons/external-dns/helm-release.yaml
   - ../../../../platform/addons/tracing/helm-release.yaml

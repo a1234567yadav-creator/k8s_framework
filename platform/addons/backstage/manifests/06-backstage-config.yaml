@@ -8,18 +8,18 @@ data:
   app-config.yaml: |
     app:
       title: K8s Framework Developer Portal
-      baseUrl: http://backstage.backstage.svc.cluster.local:7007
+      baseUrl: http://localhost:7007
       
     organization:
       name: K8s Framework Platform
       
     backend:
-      baseUrl: http://backstage.backstage.svc.cluster.local:7007
+      baseUrl: http://localhost:7007
       listen:
         port: 7007
         host: 0.0.0.0
       cors:
-        origin: http://backstage.backstage.svc.cluster.local:7007
+        origin: http://localhost:7007
         credentials: true
       database:
         client: pg
@@ -30,13 +30,25 @@ data:
           password: ${POSTGRES_PASSWORD}
           database: ${POSTGRES_DB}
     
+    # Authentication configuration - allow guest access
+    auth:
+      providers:
+        guest:
+          dangerouslyAllowOutsideDevelopment: true
+    
+    # Required techdocs configuration
+    techdocs:
+      builder: 'local'
+      generator:
+        runIn: 'local'
+      publisher:
+        type: 'local'
+    
     # Basic catalog configuration
     catalog:
       rules:
         - allow: [Component, System, API, Resource, Location]
-      locations:
-        - type: file
-          target: ../../examples/entities.yaml
+      locations: []
           
     # Kubernetes integration
     kubernetes:

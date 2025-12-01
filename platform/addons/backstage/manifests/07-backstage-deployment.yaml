@@ -20,7 +20,7 @@ spec:
       serviceAccountName: backstage
       containers:
         - name: backstage
-          image: spotify/backstage:latest  # Using Spotify's official demo image
+          image: ghcr.io/backstage/backstage:latest  # Back to working image
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -36,6 +36,10 @@ spec:
               value: "http://backstage.backstage.svc.cluster.local:7007"
             - name: APP_CONFIG_backend_baseUrl  
               value: "http://backstage.backstage.svc.cluster.local:7007"
+            - name: POSTGRES_HOST
+              value: "postgres.backstage.svc.cluster.local"
+            - name: POSTGRES_PORT
+              value: "5432"
           resources:
             requests:
               cpu: 100m    # Optimized for 4-core constraint
