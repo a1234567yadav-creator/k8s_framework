@@ -1,26 +1,9 @@
 # Backstage development environment configuration
 # Optimized for 4-core constraint
 
+# Disable PostgreSQL dependency and use SQLite for development
 postgresql:
-  image:
-    tag: "15.8.0-debian-12-r5"  # Use available PostgreSQL 15.x version
-  auth:
-    postgresPassword: "dev-backstage-secret"
-    password: "dev-backstage-secret"
-    database: "backstage_catalog_dev"
-  # Disable metrics to avoid image pull issues
-  metrics:
-    enabled: false
-  primary:
-    resources:
-      requests:
-        cpu: 50m    # Reduced for dev
-        memory: 128Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
-    persistence:
-      size: 1Gi     # Smaller for dev
+  enabled: false
 
 backstage:
   resources:
@@ -68,6 +51,9 @@ backstage:
       baseUrl: "http://backstage.dev.k8s-framework.local"
       cors:
         origin: "http://backstage.dev.k8s-framework.local"
+      database:
+        client: better-sqlite3
+        connection: ':memory:'  # Use in-memory SQLite for development
     
     kubernetes:
       serviceLocatorMethod:
