@@ -99,11 +99,11 @@ spec:
     # Resource limits for dev
     resources:
       requests:
-        cpu: 50m
-        memory: 256Mi
-      limits:
-        cpu: 200m
+        cpu: 100m
         memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
     
     # Official chart defaults - automatically reads Elasticsearch secrets
     # Docs: https://github.com/elastic/helm-charts/tree/main/kibana#how-to-use-kibana-with-security-authentication-and-tls-enabled
