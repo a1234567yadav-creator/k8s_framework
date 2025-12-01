@@ -3,10 +3,10 @@ istiod:
     resources:
       requests:
         cpu: 100m
-        memory: 512Mi
+        memory: 256Mi  # Reduced from 512Mi
       limits:
-        cpu: 500m
-        memory: 2Gi
+        cpu: 300m  # Reduced from 500m
+        memory: 512Mi  # Reduced from 2Gi
 ingress:
   service:
     type: LoadBalancer

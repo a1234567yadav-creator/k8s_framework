@@ -1,13 +1,13 @@
 prometheus:
   prometheusSpec:
-    retention: 7d
+    retention: 3d  # Reduced from 7d for smaller storage
     resources:
       requests:
-        cpu: 100m
+        cpu: 200m
         memory: 512Mi
       limits:
         cpu: 500m
-        memory: 2Gi
+        memory: 1Gi
 grafana:
   ingress:
     enabled: true
@@ -16,3 +16,5 @@ grafana:
 kube-prometheus-stack: # to be commited before going live since this is local testing and the application running in hyper v node
   prometheus-node-exporter:
     enabled: false
+  alertmanager:
+    enabled: false  # Disable in dev to save resources
