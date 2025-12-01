@@ -93,8 +93,12 @@ spec:
         memory: 512Mi
     # Connect to Elasticsearch without security
     elasticsearchHosts: "http://elasticsearch-master.logging.svc.cluster.local:9200"
-    # Disable token-based authentication since ES security is disabled
+    # Disable all authentication - no tokens, no credentials
+    elasticsearchCredentialSecret: ""
+    # Override environment variables to not use secrets
     extraEnvs:
+      - name: ELASTICSEARCH_SERVICEACCOUNTTOKEN
+        value: ""
       - name: ELASTICSEARCH_USERNAME
         value: ""
       - name: ELASTICSEARCH_PASSWORD
