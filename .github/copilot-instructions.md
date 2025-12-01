@@ -2,7 +2,7 @@
 
 These rules make an AI agent immediately productive in this repository. The repo is a reusable Kubernetes “platform baseline” that layers platform add‑ons onto existing clusters (EKS/AKS/GKE) across `dev`, `stage`, and `prod` using Helm and/or Kustomize, driven by environment configuration and GitOps.
 
-**Architecture & Layout**
+**Architecture & Layout** 
 - `clusters/<env>/`: Kubeconfig example, `values/*.yaml` per addon, and `helmfile.yaml` (default) or `kustomization.yaml` for env orchestration.
 - `platform/base/`: Namespaces, RBAC, optional network policies — applied to all envs first.
 - `platform/addons/<addon>/`: One folder per addon (flux, argocd, istio, ingress-nginx, cert-manager, external-dns, prometheus-stack, grafana, logging, tracing). Include a base manifest (HelmRelease/Kustomization) and `values-example.yaml`.
@@ -60,9 +60,9 @@ we can use this repo to deploy all required platform components
 (GitOps, service mesh, monitoring, logging, ingress, certs, etc.) in a
 repeatable way.
  
------------------------------------
+----------------------------------
 SCOPE / OBJECTIVES
------------------------------------
+----------------------------------
 - Assume clusters already exist (EKS, AKS, or GKE). This repo focuses on
   PLATFORM ADD-ONS, not cluster provisioning.
 - Support multiple environments: `dev`, `stage`, `prod`.
