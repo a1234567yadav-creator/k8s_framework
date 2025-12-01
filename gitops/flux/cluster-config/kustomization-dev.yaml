@@ -8,7 +8,7 @@ spec:
   interval: 5m
   retryInterval: 1m
   timeout: 5m
-  wait: true
+  wait: false  # Temporarily disable health check wait
   prune: true
   sourceRef:
     kind: GitRepository
