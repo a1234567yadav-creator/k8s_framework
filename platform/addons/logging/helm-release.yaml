@@ -91,8 +91,8 @@ spec:
         memory: 512Mi
     # Connect to Elasticsearch without security
     elasticsearchHosts: "http://elasticsearch-master.logging.svc.cluster.local:9200"
-    # Disable all authentication - no tokens, no credentials
-    elasticsearchCredentialSecret: ""
+    # Use the pre-created token secret (empty for non-secured ES)
+    elasticsearchCredentialSecret: "kibana-kibana-es-token"
     # Override environment variables to not use secrets
     extraEnvs:
       - name: ELASTICSEARCH_SERVICEACCOUNTTOKEN
@@ -101,7 +101,7 @@ spec:
         value: ""
       - name: ELASTICSEARCH_PASSWORD
         value: ""
-    # Don't create or mount secrets
+    # Don't mount the certs secret since we disabled TLS
     secretMounts: []
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
