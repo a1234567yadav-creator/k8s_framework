@@ -1,43 +1,43 @@
 environments:
   dev:
-    cloud: eks
+    cloud: aks
     addons:
       flux: true
       argocd: false
       istio: true
-      ingress: true
+      ingress-nginx: true
       cert-manager: true
       external-dns: false
       prometheus: true
       grafana: true
       logging: true
       tracing: false
-      backstage: true
+      backstage: false  # Explicitly disabled for auto-deployment
   stage:
     cloud: aks
     addons:
       flux: true
       argocd: false
       istio: true
-      ingress: true
-      cert-manager: true
-      external-dns: true
-      prometheus: true
-      grafana: true
-      logging: true
-      tracing: false
-      backstage: true
-  prod:
-    cloud: gke
-    addons:
-      flux: true
-      argocd: false
-      istio: true
-      ingress: true
+      ingress-nginx: true
       cert-manager: true
       external-dns: true
       prometheus: true
       grafana: true
       logging: true
       tracing: true
-      backstage: true
+      backstage: false  # Manually managed
+  prod:
+    cloud: aks
+    addons:
+      flux: true
+      argocd: false
+      istio: true
+      ingress-nginx: true
+      cert-manager: true
+      external-dns: true
+      prometheus: true
+      grafana: true
+      logging: true
+      tracing: true
+      backstage: false  # Manually managed
