@@ -119,5 +119,5 @@ jobs:
 
       - name: Reconcile Flux
         run: |
-          flux reconcile source git platform-repo --with-source
+          # Reconcile the Kustomization (this will also reconcile the source)
           flux reconcile kustomization platform-dev --with-source
