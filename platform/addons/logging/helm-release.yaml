@@ -43,22 +43,23 @@ spec:
       resources:
         requests:
           storage: 5Gi
-    # Enable HTTPS with self-signed certs (best practice)
+    # Enable HTTPS with auto-generated self-signed certs (best practice)
     protocol: https
     esConfig:
       elasticsearch.yml: |
         xpack.security.enabled: true
         xpack.security.enrollment.enabled: true
+        # HTTP layer SSL using auto-generated certs
         xpack.security.http.ssl.enabled: true
-        xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
+        # Transport layer SSL using auto-generated certs
         xpack.security.transport.ssl.enabled: true
         xpack.security.transport.ssl.verification_mode: certificate
-        xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-        xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-    # Create default users
+    # Create default elastic user with password
     secret:
       enabled: true
       password: "changeme"  # Change in production via sealed secrets
+    # Let chart generate certificates automatically
+    createCert: true
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
