@@ -91,13 +91,25 @@ jobs:
         run: az aks get-credentials -g hub -n k8s-framework --overwrite-existing
 
 
-      - name: Install Flux CLI (or Helmfile if you prefer)
-        run: curl -s https://fluxcd.io/install.sh | sudo bash
+      - name: Install Flux CLI
+        run: |
+          curl -s https://fluxcd.io/install.sh | sudo bash
+          flux --version
 
       - name: Bootstrap Flux (first run)
         run: |
-          # Install Flux controllers if not present
-          flux check --pre || flux install --components-extra=image-reflector-controller,image-automation-controller
+          # Check if Flux is already installed
+          if ! flux check > /dev/null 2>&1; then
+            echo "Installing Flux..."
+            flux install --components-extra=image-reflector-controller,image-automation-controller
+          else
+            echo "Flux is already installed"
+          fi
+          
+          # Wait for Flux to be ready
+          kubectl wait --for=condition=ready pod -l app=source-controller -n flux-system --timeout=300s
+          kubectl wait --for=condition=ready pod -l app=kustomize-controller -n flux-system --timeout=300s
+          kubectl wait --for=condition=ready pod -l app=helm-controller -n flux-system --timeout=300s
           
           # Apply GitRepository
           kubectl apply -f gitops/flux/cluster-config/gitrepository.yaml
