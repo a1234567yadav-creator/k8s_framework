@@ -1,3 +1,6 @@
+---
+# Elasticsearch - Official Helm Chart with default security enabled
+# Documentation: https://github.com/elastic/helm-charts/tree/main/elasticsearch
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -27,9 +30,14 @@ spec:
     remediation:
       retries: 3
   values:
+    # Single node for dev environment
     replicas: 1
     minimumMasterNodes: 1
+    
+    # Relaxed health check for single node
     clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
+    
+    # Resource limits for dev
     esJavaOpts: "-Xmx512m -Xms512m"
     resources:
       requests:
@@ -38,18 +46,23 @@ spec:
       limits:
         cpu: 500m
         memory: 1Gi
+    
+    # Persistent storage
     volumeClaimTemplate:
       accessModes: ["ReadWriteOnce"]
       resources:
         requests:
           storage: 5Gi
-    # Use official chart defaults: HTTPS with auto-generated certs
-    protocol: https
-    createCert: true
+    
+    # Security enabled by default in 8.x
+    # Chart automatically creates self-signed certificates and credentials
+    # Official docs: https://github.com/elastic/helm-charts/tree/main/elasticsearch#how-to-deploy-clusters-with-security-authentication-and-tls-enabled
     secret:
       enabled: true
-      password: "changeme"  # Change in production
+      password: "changeme"  # Change in production using sealed secrets
 ---
+# Kibana - Official Helm Chart with automatic security configuration
+# Documentation: https://github.com/elastic/helm-charts/tree/main/kibana
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -62,7 +75,7 @@ metadata:
 spec:
   interval: 10m
   timeout: 10m
-  # Wait for Elasticsearch to be ready before installing Kibana
+  # Wait for Elasticsearch to be ready
   dependsOn:
     - name: elasticsearch
       namespace: logging
@@ -77,16 +90,13 @@ spec:
       interval: 5m
   install:
     createNamespace: false
-    disableHooks: true
     remediation:
       retries: 3
   upgrade:
-    disableHooks: true
     remediation:
       retries: 3
   values:
-    service:
-      type: ClusterIP
+    # Resource limits for dev
     resources:
       requests:
         cpu: 50m
@@ -94,7 +104,10 @@ spec:
       limits:
         cpu: 200m
         memory: 512Mi
-    # Official chart defaults for connecting to Elasticsearch
+    
+    # Official chart defaults - automatically reads Elasticsearch secrets
+    # Docs: https://github.com/elastic/helm-charts/tree/main/kibana#how-to-use-kibana-with-security-authentication-and-tls-enabled
+    # These values match the default values.yaml from the chart
     elasticsearchHosts: "https://elasticsearch-master:9200"
     elasticsearchCertificateSecret: "elasticsearch-master-certs"
     elasticsearchCertificateAuthoritiesFile: "ca.crt"
