@@ -1,8 +1,35 @@
+# Prometheus Stack Configuration for stage
+# Resource constraints removed - Kubernetes will auto-manage
 prometheus:
   prometheusSpec:
     retention: 14d
+    resources: {}
+    
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    resources: {}
+
 grafana:
+  enabled: false
   ingress:
     enabled: true
     hosts:
       - grafana.stage.example.com
+
+kubeStateMetrics:
+  resources: {}
+
+nodeExporter:
+  resources: {}
+
+prometheusOperator:
+  resources: {}

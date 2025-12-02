@@ -1,5 +1,9 @@
+# External DNS Configuration for dev
+# Resource constraints removed - Kubernetes will auto-manage
 provider: aws
 policy: upsert-only
 txtOwnerId: platform-dev
 domainFilters:
   - dev.example.com
+
+resources: {}

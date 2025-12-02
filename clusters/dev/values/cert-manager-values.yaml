@@ -1,4 +1,18 @@
+# cert-manager Configuration for dev
+# Resource constraints removed - Kubernetes will auto-manage
 installCRDs: true
+
+resources: {}
+
+webhook:
+  resources: {}
+
+cainjector:
+  resources: {}
+
+startupapicheck:
+  resources: {}
+
 clusterIssuer:
   email: ops@dev.example.com
 securityContext:

@@ -37,20 +37,20 @@ spec:
     esJavaOpts: "-Xmx256m -Xms256m"
     
     # Minimal resource allocation
-    resources:
-      requests:
-        cpu: 200m
-        memory: 512Mi
-      limits:
-        cpu: 500m
-        memory: 1Gi
+    # resources:
+    #   requests:
+    #     cpu: 200m
+    #     memory: 512Mi
+    #   limits:
+    #     cpu: 500m
+    #     memory: 1Gi
     
     # Small persistent volume
-    volumeClaimTemplate:
-      accessModes: ["ReadWriteOnce"]
-      resources:
-        requests:
-          storage: 2Gi
+    # volumeClaimTemplate:
+    #   accessModes: ["ReadWriteOnce"]
+    #   resources:
+    #     requests:
+    #       storage: 2Gi
     
     # Use elasticsearch config to set single-node and disable security
     esConfig:
@@ -94,13 +94,13 @@ spec:
       retries: 3
   values:
     # Minimal resources
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
-      limits:
-        cpu: 300m
-        memory: 512Mi
+    # resources:
+    #   requests:
+    #     cpu: 100m
+    #     memory: 256Mi
+    #   limits:
+    #     cpu: 300m
+    #     memory: 512Mi
     
     # Connect to Elasticsearch without security
     elasticsearchHosts: "http://elasticsearch-master:9200"
@@ -134,13 +134,13 @@ spec:
     createNamespace: false
   values:
     # Minimal resources for log collection
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-      limits:
-        cpu: 100m
-        memory: 128Mi
+    # resources:
+    #   requests:
+    #     cpu: 50m
+    #     memory: 64Mi
+    #   limits:
+    #     cpu: 100m
+    #     memory: 128Mi
     
     # Output to Elasticsearch without security
     config:

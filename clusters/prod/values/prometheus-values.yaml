@@ -1,8 +1,35 @@
+# Prometheus Stack Configuration for prod
+# Resource constraints removed - Kubernetes will auto-manage
 prometheus:
   prometheusSpec:
     retention: 30d
+    resources: {}
+    
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    resources: {}
+
 grafana:
+  enabled: false
   ingress:
     enabled: true
     hosts:
       - grafana.prod.example.com
+
+kubeStateMetrics:
+  resources: {}
+
+nodeExporter:
+  resources: {}
+
+prometheusOperator:
+  resources: {}

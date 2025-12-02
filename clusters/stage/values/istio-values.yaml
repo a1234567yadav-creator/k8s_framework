@@ -1,9 +1,10 @@
+# Istio Configuration for stage
+# Resource constraints removed - Kubernetes will auto-manage
 istiod:
   pilot:
-    resources:
-      requests:
-        cpu: 250m
-        memory: 512Mi
+    resources: {}
+
 ingress:
   service:
     type: LoadBalancer
+  resources: {}

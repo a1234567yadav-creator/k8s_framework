@@ -1,6 +1,32 @@
+# Grafana Configuration for dev
+# Resource constraints removed - Kubernetes will auto-manage
 adminUser: admin
 adminPassword: CHANGEME
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      url: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+      access: proxy
+      isDefault: true
+
+persistence:
+  enabled: true
+  size: 5Gi
+
+service:
+  type: ClusterIP
+  port: 80
+
 ingress:
   enabled: true
+  ingressClassName: nginx
   hosts:
     - grafana.dev.example.com
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+resources: {}

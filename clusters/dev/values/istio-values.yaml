@@ -1,19 +1,10 @@
+# Istio Configuration for dev
+# Resource constraints removed - Kubernetes will auto-manage
 istiod:
   pilot:
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi  # Reduced from 512Mi
-      limits:
-        cpu: 300m  # Reduced from 500m
-        memory: 512Mi  # Reduced from 2Gi
+    resources: {}
+
 ingress:
   service:
     type: LoadBalancer
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi
+  resources: {}

@@ -23,22 +23,153 @@ This repository provides a reusable baseline to layer mandatory/platform add‑o
 - Tracing: Jaeger (optional)
 
 ## Quick Start
-1. Set `KUBECONFIG` to your target cluster; choose env (`dev|stage|prod`).
-2. Option A — GitOps (Flux default):
-   - Bootstrap Flux and reconcile env:
-     ```powershell
-     $env:KUBECONFIG="C:\path\to\kubeconfig"; $env:ENV="dev"; bash scripts/bootstrap-flux.sh
-     ```
-3. Option B — Helmfile (local apply):
-   - Apply selected env charts:
-     ```powershell
-     $env:KUBECONFIG="C:\path\to\kubeconfig"; $env:ENV="dev"; bash scripts/apply-env.sh
-     ```
-4. Option C — Argo CD (optional):
-   - Install Argo CD and apply root app:
-     ```powershell
-     $env:KUBECONFIG="C:\path\to\kubeconfig"; $env:ENV="dev"; bash scripts/bootstrap-argocd.sh
-     ```
+
+### Prerequisites
+- Kubernetes cluster (AKS/EKS/GKE) with kubectl access
+- Helm 3.x installed
+- Helmfile installed (optional, for orchestrated deployments)
+- Flux CLI (for GitOps deployments)
+
+### Option A: Deploy All Services with Helmfile (Recommended)
+
+```powershell
+# Set environment variables
+$env:KUBECONFIG="C:\path\to\kubeconfig"
+$env:ENV="dev"
+
+# Deploy all platform services at once
+bash scripts/apply-env.sh
+```
+
+This will deploy all services in the correct order:
+1. Istio (base → istiod → gateway)
+2. Ingress NGINX
+3. cert-manager
+4. Prometheus Stack
+5. Grafana
+6. Elasticsearch
+7. Kibana
+8. Fluent Bit
+9. External DNS (optional)
+10. Jaeger (optional)
+
+### Option B: Deploy with Flux GitOps
+
+```powershell
+# Set environment variables
+$env:KUBECONFIG="C:\path\to\kubeconfig"
+$env:ENV="dev"
+
+# Bootstrap Flux (will auto-reconcile all services)
+bash scripts/bootstrap-flux.sh
+```
+
+Flux will automatically:
+- Install all Helm releases defined in the environment
+- Monitor the Git repository for changes
+- Auto-heal if resources drift from desired state
+
+### Option C: Manual Step-by-Step Deployment
+
+```powershell
+cd clusters/dev
+
+# Update Helm repositories
+helmfile repos
+
+# Deploy specific services
+helmfile -l app.kubernetes.io/name=istio-base sync
+helmfile -l app.kubernetes.io/name=istiod sync
+helmfile -l app.kubernetes.io/name=ingress-nginx sync
+
+# Or deploy everything
+helmfile sync
+```
+
+## Resource Constraints
+
+**All resource constraints have been removed** to allow Kubernetes to auto-manage resources based on actual usage. For production deployments, consider adding resource limits based on your cluster capacity and monitoring data.
+
+To add constraints back, update the values files in `clusters/<env>/values/`:
+
+```yaml
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+```
+
+## Verify Deployment
+
+```powershell
+# Check all platform namespaces
+kubectl get pods -n istio-system
+kubectl get pods -n ingress-nginx
+kubectl get pods -n cert-manager
+kubectl get pods -n monitoring
+kubectl get pods -n logging
+
+# Check Helm releases
+helm list -A
+
+# Check Flux reconciliation (if using GitOps)
+flux get kustomizations
+flux get helmreleases -A
+```
+
+## Backstage Integration
+
+After the platform is deployed, you can manually install and integrate Backstage:
+
+See [docs/BACKSTAGE_INTEGRATION.md](docs/BACKSTAGE_INTEGRATION.md) for detailed instructions.
+
+## Troubleshooting
+
+### Services Not Starting
+
+```powershell
+# Check pod events
+kubectl describe pod <pod-name> -n <namespace>
+
+# Check logs
+kubectl logs -n <namespace> <pod-name>
+
+# Check Helm release status
+helm status <release-name> -n <namespace>
+```
+
+### Out of Memory / CPU Issues
+
+Since resource constraints are removed, monitor actual usage:
+
+```powershell
+# Check node resources
+kubectl top nodes
+
+# Check pod resources
+kubectl top pods -A
+
+# Add resource limits if needed
+helm upgrade <release-name> <chart> -n <namespace> `
+  --set resources.requests.memory=256Mi `
+  --set resources.limits.memory=512Mi
+```
+
+### Flux Reconciliation Failures
+
+```powershell
+# Check Flux status
+flux get all -A
+
+# Check specific Helm release
+flux get helmrelease <name> -n <namespace>
+
+# Force reconciliation
+flux reconcile helmrelease <name> -n <namespace>
+```
 
 ## Access & Verification
 - Istio injection: label a namespace and deploy a pod:
@@ -48,6 +179,11 @@ This repository provides a reusable baseline to layer mandatory/platform add‑o
   ```
 - Prometheus/Grafana: verify pods in `monitoring`; expose Grafana via ingress host from `clusters/<env>/values/grafana-values.yaml`.
 - Logging: confirm `elasticsearch`/`kibana`/`fluent-bit` pods in `logging`; port‑forward Kibana if needed.
+
+## Additional Documentation
+
+- [Deployment Checklist](docs/DEPLOYMENT_CHECKLIST.md) - Complete pre and post-deployment verification
+- [Backstage Integration](docs/BACKSTAGE_INTEGRATION.md) - How to integrate Backstage with platform services
 
 ## Contributing
 - Add new addons under `platform/addons/<addon>/` with a base manifest and `values-example.yaml`.

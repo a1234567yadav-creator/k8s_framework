@@ -1,9 +1,10 @@
+# Istio Configuration for prod
+# Resource constraints removed - Kubernetes will auto-manage
 istiod:
   pilot:
-    resources:
-      requests:
-        cpu: 500m
-        memory: 1Gi
+    resources: {}
+
 ingress:
   service:
     type: LoadBalancer
+  resources: {}

@@ -1,20 +1,49 @@
+# Prometheus Stack Configuration for dev
+# Resource constraints removed - Kubernetes will auto-manage
 prometheus:
   prometheusSpec:
-    retention: 3d  # Reduced from 7d for smaller storage
-    resources:
-      requests:
-        cpu: 200m
-        memory: 512Mi
-      limits:
-        cpu: 500m
-        memory: 1Gi
+    retention: 7d
+    resources: {}
+    
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    resources: {}
+    
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 5Gi
+
 grafana:
+  enabled: false  # Installed separately
   ingress:
     enabled: true
     hosts:
       - grafana.dev.example.com
-kube-prometheus-stack: # to be commited before going live since this is local testing and the application running in hyper v node
+
+kubeStateMetrics:
+  resources: {}
+
+nodeExporter:
+  resources: {}
+
+prometheusOperator:
+  resources: {}
+
+kube-prometheus-stack:
   prometheus-node-exporter:
-    enabled: false
+    enabled: false  # Can be enabled if needed
   alertmanager:
-    enabled: false  # Disable in dev to save resources
+    enabled: true

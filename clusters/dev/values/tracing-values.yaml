@@ -1,7 +1,21 @@
+# Jaeger Tracing Configuration for dev
+# Resource constraints removed - Kubernetes will auto-manage
 provisionDataStore:
   elasticsearch: true
+
 query:
   ingress:
     enabled: true
     hosts:
       - jaeger.dev.example.com
+
+resources: {}
+
+collector:
+  resources: {}
+
+agent:
+  resources: {}
+
+query:
+  resources: {}
