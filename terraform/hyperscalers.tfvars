@@ -8,73 +8,73 @@ resource_groups = {
   rg-spoke = { name = "rg-spoke", location = "eastus" }
 }
 
-# nsgs = {
-#   hub-nsg = {
-#     name               = "hub-nsg"
-#     resource_group_key = "rg-hub"
-#     rules = [
-#       {
-#         name                       = "AllowAzureServices"
-#         priority                   = 100
-#         direction                  = "Inbound"
-#         access                     = "Allow"
-#         protocol                   = "*"
-#         source_port_range          = "*"
-#         destination_port_range     = "*"
-#         source_address_prefix      = "AzureLoadBalancer"
-#         destination_address_prefix = "*"
-#       }
-#     ]
-#   }
-#   aks-nsg = {
-#     name               = "aks-nsg"
-#     resource_group_key = "rg-spoke"
-#     rules = [
-#       {
-#         name                       = "AllowAKSNodePorts"
-#         priority                   = 200
-#         direction                  = "Inbound"
-#         access                     = "Allow"
-#         protocol                   = "Tcp"
-#         source_port_range          = "*"
-#         destination_port_range     = "30000-32767"
-#         source_address_prefix      = "*"
-#         destination_address_prefix = "*"
-#       }
-#     ]
-#   }
-# }
+nsgs = {
+  hub-nsg = {
+    name               = "hub-nsg"
+    resource_group_key = "rg-hub"
+    rules = [
+      {
+        name                       = "AllowAzureServices"
+        priority                   = 100
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "*"
+        source_port_range          = "*"
+        destination_port_range     = "*"
+        source_address_prefix      = "AzureLoadBalancer"
+        destination_address_prefix = "*"
+      }
+    ]
+  }
+  aks-nsg = {
+    name               = "aks-nsg"
+    resource_group_key = "rg-spoke"
+    rules = [
+      {
+        name                       = "AllowAKSNodePorts"
+        priority                   = 200
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "30000-32767"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
+      }
+    ]
+  }
+}
 
-# vnets = {
-#   vnet-spoke = {
-#     name               = "vnet-spoke"
-#     address_space      = ["10.10.0.0/16"]
-#     resource_group_key = "rg-spoke"
-#   }
-# }
+vnets = {
+  vnet-spoke = {
+    name               = "vnet-spoke"
+    address_space      = ["10.10.0.0/16"]
+    resource_group_key = "rg-spoke"
+  }
+}
 
-# subnets = {
-#   aks-subnet = {
-#     name           = "aks-subnet"
-#     vnet_key       = "vnet-spoke"
-#     address_prefix = "10.10.2.0/24"
-#     nsg_key        = "aks-nsg"
-#     delegations    = [
-#       {
-#         name = "aks-delegation"
-#         service_delegation = {
-#           name    = "Microsoft.ContainerService/managedClusters"
-#           actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
-#         }
-#       }
-#     ]
-#   }
-#   app-subnet = {
-#     name           = "app-subnet"
-#     vnet_key       = "vnet-spoke"
-#     address_prefix = "10.10.3.0/24"
-#   }
-# }
+subnets = {
+  aks-subnet = {
+    name           = "aks-subnet"
+    vnet_key       = "vnet-spoke"
+    address_prefix = "10.10.2.0/24"
+    nsg_key        = "aks-nsg"
+    delegations    = [
+      {
+        name = "aks-delegation"
+        service_delegation = {
+          name    = "Microsoft.ContainerService/managedClusters"
+          actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+        }
+      }
+    ]
+  }
+  app-subnet = {
+    name           = "app-subnet"
+    vnet_key       = "vnet-spoke"
+    address_prefix = "10.10.3.0/24"
+  }
+}
 
 # aks_clusters = {
 #   aks-anywhere = {

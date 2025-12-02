@@ -7,11 +7,11 @@ module "azure_network" {
   subnets         = var.subnets
   }
 
-module "aks" {
-  source = "./modules/azure/aks"
-  aks_clusters = var.aks_clusters
-  depends_on = [ module.azure_network ]
-}
+# module "aks" {
+#   source = "./modules/azure/aks"
+#   aks_clusters = var.aks_clusters
+#   depends_on = [ module.azure_network ]
+# }
 
 # module "aws_vpc" {
 #   source = "./modules/aws/vpc"
