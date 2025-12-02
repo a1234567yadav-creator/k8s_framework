@@ -40,6 +40,17 @@ spec:
               value: "postgres.backstage.svc.cluster.local"
             - name: POSTGRES_PORT
               value: "5432"
+            - name: KUBERNETES_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: backstage-token
+                  key: token
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: backstage-secrets
+                  key: github-token
+                  optional: true
           resources:
             requests:
               cpu: 100m    # Optimized for 4-core constraint

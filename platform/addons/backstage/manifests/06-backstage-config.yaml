@@ -48,7 +48,9 @@ data:
     catalog:
       rules:
         - allow: [Component, System, API, Resource, Location]
-      locations: []
+      locations:
+        - type: file
+          target: /etc/backstage/catalog/platform-catalog.yaml
           
     # Kubernetes integration
     kubernetes:
@@ -62,3 +64,39 @@ data:
               authProvider: 'serviceAccount'
               skipTLSVerify: true
               skipMetricsLookup: false
+    
+    # Platform service integrations
+    proxy:
+      '/prometheus/api':
+        target: 'http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090'
+        pathRewrite:
+          '^/proxy/prometheus/': '/'
+        headers:
+          Authorization: 'Bearer ${KUBERNETES_TOKEN}'
+      
+      '/grafana/api':
+        target: 'http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80'
+        pathRewrite:
+          '^/proxy/grafana/': '/'
+        headers:
+          Authorization: 'Bearer ${KUBERNETES_TOKEN}'
+      
+      '/elasticsearch/api':
+        target: 'http://elasticsearch-master.logging.svc.cluster.local:9200'
+        pathRewrite:
+          '^/proxy/elasticsearch/': '/'
+        headers:
+          Authorization: 'Bearer ${KUBERNETES_TOKEN}'
+      
+      '/kibana/api':
+        target: 'http://kibana-kb-http.logging.svc.cluster.local:5601'
+        pathRewrite:
+          '^/proxy/kibana/': '/'
+        headers:
+          Authorization: 'Bearer ${KUBERNETES_TOKEN}'
+    
+    # Integrations for external tools
+    integrations:
+      github:
+        - host: github.com
+          token: ${GITHUB_TOKEN}

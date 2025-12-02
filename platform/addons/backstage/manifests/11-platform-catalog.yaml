@@ -1,0 +1,109 @@
+# Platform Services Catalog for Backstage
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backstage-platform-catalog
+  namespace: backstage
+data:
+  platform-catalog.yaml: |
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: System
+    metadata:
+      name: k8s-platform
+      title: Kubernetes Platform Framework
+      description: Enterprise-grade Kubernetes platform with GitOps, monitoring, service mesh, and logging
+      annotations:
+        github.com/project-slug: a1234567yadav-creator/k8s_framework
+        backstage.io/kubernetes-id: k8s-platform
+        backstage.io/kubernetes-namespace: kube-system
+      labels:
+        environment: dev
+        platform: kubernetes
+    spec:
+      owner: platform-team
+      domain: infrastructure
+    
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: Component
+    metadata:
+      name: prometheus
+      title: Prometheus Monitoring
+      description: Metrics collection and monitoring for the entire platform
+      annotations:
+        backstage.io/kubernetes-id: prometheus
+        backstage.io/kubernetes-namespace: monitoring
+        prometheus.io/rule: 'prometheus_*'
+        backstage.io/techdocs-ref: dir:.
+      links:
+        - url: /proxy/prometheus/
+          title: Prometheus UI
+          icon: monitoring
+      labels:
+        backstage.io/kubernetes-id: prometheus
+    spec:
+      type: service
+      owner: platform-team
+      lifecycle: production
+      system: k8s-platform
+      providesApis:
+        - prometheus-metrics-api
+      dependsOn:
+        - component:kube-prometheus-stack
+    
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: Component
+    metadata:
+      name: grafana
+      title: Grafana Dashboards
+      description: Metrics visualization and dashboard platform
+      annotations:
+        backstage.io/kubernetes-id: grafana
+        backstage.io/kubernetes-namespace: monitoring
+        grafana.com/dashboard-url: '/d/kubernetes-cluster-monitoring-via-prometheus'
+      links:
+        - url: /proxy/grafana/
+          title: Grafana Dashboards
+          icon: dashboard
+      labels:
+        backstage.io/kubernetes-id: grafana
+    spec:
+      type: service
+      owner: platform-team
+      lifecycle: production
+      system: k8s-platform
+      consumesApis:
+        - prometheus-metrics-api
+      dependsOn:
+        - component:prometheus
+    
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: Component
+    metadata:
+      name: elasticsearch
+      title: Elasticsearch Logging
+      description: Centralized log storage and search engine
+      annotations:
+        backstage.io/kubernetes-id: elasticsearch
+        backstage.io/kubernetes-namespace: logging
+        elasticsearch.com/cluster-name: 'elasticsearch'
+      links:
+        - url: /proxy/elasticsearch/_cluster/health
+          title: Cluster Health
+          icon: storage
+      labels:
+        backstage.io/kubernetes-id: elasticsearch
+    spec:
+      type: service
+      owner: platform-team
+      lifecycle: production
+      system: k8s-platform
+      providesApis:
+        - elasticsearch-api
+    
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: Component\n    metadata:\n      name: kibana\n      title: Kibana Analytics\n      description: Log visualization and analytics platform\n      annotations:\n        backstage.io/kubernetes-id: kibana\n        backstage.io/kubernetes-namespace: logging\n        kibana.com/dashboard-url: '/app/discover'\n      links:\n        - url: /proxy/kibana/app/discover\n          title: Kibana Discover\n          icon: search\n        - url: /proxy/kibana/app/dashboards\n          title: Kibana Dashboards\n          icon: dashboard\n      labels:\n        backstage.io/kubernetes-id: kibana\n    spec:\n      type: service\n      owner: platform-team\n      lifecycle: production\n      system: k8s-platform\n      consumesApis:\n        - elasticsearch-api\n      dependsOn:\n        - component:elasticsearch\n    \n    ---\n    apiVersion: backstage.io/v1alpha1\n    kind: Component\n    metadata:\n      name: istio-service-mesh\n      title: Istio Service Mesh\n      description: Service mesh providing traffic management, security, and observability\n      annotations:\n        backstage.io/kubernetes-id: istio-mesh\n        backstage.io/kubernetes-namespace: istio-system\n        istio.io/dashboard: '/dashboard/'\n      labels:\n        backstage.io/kubernetes-id: istio-mesh\n    spec:\n      type: service\n      owner: platform-team\n      lifecycle: production\n      system: k8s-platform\n      providesApis:\n        - istio-control-plane-api\n    \n    ---\n    apiVersion: backstage.io/v1alpha1\n    kind: Component\n    metadata:\n      name: flux-gitops\n      title: Flux GitOps Controller\n      description: GitOps continuous deployment using Flux v2\n      annotations:\n        backstage.io/kubernetes-id: flux-gitops\n        backstage.io/kubernetes-namespace: flux-system\n        fluxcd.io/dashboard: '/flux/'\n      labels:\n        backstage.io/kubernetes-id: flux-gitops\n    spec:\n      type: service\n      owner: platform-team\n      lifecycle: production\n      system: k8s-platform\n      dependsOn:\n        - resource:platform-git-repo\n    \n    ---\n    apiVersion: backstage.io/v1alpha1\n    kind: Component\n    metadata:\n      name: cert-manager\n      title: Certificate Manager\n      description: Automated TLS certificate management for Kubernetes\n      annotations:\n        backstage.io/kubernetes-id: cert-manager\n        backstage.io/kubernetes-namespace: cert-manager\n      labels:\n        backstage.io/kubernetes-id: cert-manager\n    spec:\n      type: service\n      owner: platform-team\n      lifecycle: production\n      system: k8s-platform\n      providesApis:\n        - certificate-api\n    \n    ---\n    apiVersion: backstage.io/v1alpha1\n    kind: Component\n    metadata:\n      name: ingress-nginx\n      title: NGINX Ingress Controller\n      description: Load balancing and ingress traffic management\n      annotations:\n        backstage.io/kubernetes-id: ingress-controller\n        backstage.io/kubernetes-namespace: ingress-nginx\n      labels:\n        backstage.io/kubernetes-id: ingress-controller\n    spec:\n      type: service\n      owner: platform-team\n      lifecycle: production\n      system: k8s-platform\n      dependsOn:\n        - component:cert-manager\n    \n    ---\n    apiVersion: backstage.io/v1alpha1\n    kind: API\n    metadata:\n      name: prometheus-metrics-api\n      title: Prometheus Metrics API\n      description: Prometheus metrics and query API for platform monitoring\n    spec:\n      type: metrics\n      owner: platform-team\n      lifecycle: production\n      system: k8s-platform\n      definition: |\n        openapi: 3.0.0\n        info:\n          title: Prometheus API\n          version: v1\n        paths:\n          /api/v1/query:\n            get:\n              summary: Execute instant query\n              parameters:\n                - name: query\n                  in: query\n                  required: true\n                  schema:\n                    type: string\n          /api/v1/query_range:\n            get:\n              summary: Execute range query\n    \n    ---\n    apiVersion: backstage.io/v1alpha1\n    kind: API\n    metadata:\n      name: elasticsearch-api\n      title: Elasticsearch Search API\n      description: Elasticsearch REST API for log search and analytics\n    spec:\n      type: search\n      owner: platform-team\n      lifecycle: production\n      system: k8s-platform\n      definition: |\n        openapi: 3.0.0\n        info:\n          title: Elasticsearch API\n          version: 8.5.1\n        paths:\n          /_search:\n            get:\n              summary: Search logs\n          /_cluster/health:\n            get:\n              summary: Cluster health\n    \n    ---\n    apiVersion: backstage.io/v1alpha1\n    kind: Resource\n    metadata:\n      name: platform-git-repo\n      title: Platform Git Repository\n      description: Source repository for platform configuration and GitOps\n      annotations:\n        github.com/project-slug: a1234567yadav-creator/k8s_framework\n    spec:\n      type: git-repository\n      owner: platform-team\n      system: k8s-platform\n    \n    ---\n    apiVersion: backstage.io/v1alpha1\n    kind: Group\n    metadata:\n      name: platform-team\n      title: Platform Engineering Team\n      description: Kubernetes platform engineering and SRE team\n    spec:\n      type: team\n      children: []\n      members: []\n      profile:\n        displayName: Platform Engineering\n        email: platform-team@company.com\n        description: |\n          The Platform Engineering team is responsible for:\n          - Kubernetes cluster management\n          - GitOps and CI/CD pipelines\n          - Monitoring and observability\n          - Service mesh and security\n          - Developer experience and tooling

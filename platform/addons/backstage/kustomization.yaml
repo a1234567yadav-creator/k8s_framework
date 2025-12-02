@@ -14,7 +14,7 @@ resources:
   - manifests/06-backstage-config.yaml
   - manifests/07-backstage-deployment.yaml
   - manifests/08-backstage-rbac.yaml
-  - manifests/09-backstage-service.yaml
+  - manifests/09-backstage-service.yaml\n  - manifests/11-platform-catalog.yaml\n  - manifests/12-rbac.yaml
 
 commonLabels:
   app.kubernetes.io/part-of: backstage
