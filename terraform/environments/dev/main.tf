@@ -1,51 +1,16 @@
-provider "azurerm" {
-  features {}
-}
-
-provider "aws" {
-  region = var.aws_region
-}
-
-provider "google" {
-  project = var.gcp_project
-  region  = var.gcp_region
-}
-
 module "azure_network" {
-  source = "../../modules/azure/network"
-}
+  source = "./modules/azure/network"
+  vnets           = var.vnets
+  location        = var.location
+  resource_groups = var.resource_groups
+  nsgs            = var.nsgs
+  subnets         = var.subnets
+  }
 
-module "azure_aks" {
-  source              = "../../modules/azure/aks"
-  resource_group_name = module.azure_network.resource_group_name
-  location           = module.azure_network.location
-  cluster_name       = var.azure_cluster_name
-  node_count         = var.azure_node_count
-  node_size          = var.azure_node_size
-}
-
-module "aws_vpc" {
-  source = "../../modules/aws/vpc"
-}
-
-module "aws_eks" {
-  source              = "../../modules/aws/eks"
-  cluster_name       = var.aws_cluster_name
-  vpc_id             = module.aws_vpc.vpc_id
-  node_group_size    = var.aws_node_group_size
-  node_group_instance_type = var.aws_node_group_instance_type
-}
-
-module "gcp_network" {
-  source = "../../modules/gcp/network"
-}
-
-module "gcp_gke" {
-  source              = "../../modules/gcp/gke"
-  cluster_name       = var.gcp_cluster_name
-  location           = var.gcp_location
-  node_count         = var.gcp_node_count
-  node_size          = var.gcp_node_size
+module "aks" {
+  source = "./modules/azure/aks"
+  aks_clusters = var.aks_clusters
+  depends_on = [ module.azure_network ]
 }
 
 output "azure_aks_cluster_name" {

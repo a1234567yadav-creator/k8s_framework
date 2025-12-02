@@ -27,3 +27,4 @@ charts/
 
 # Backstage local development (don't push to GitHub)
 backstage-hexaware/
+terraform/.terraform/

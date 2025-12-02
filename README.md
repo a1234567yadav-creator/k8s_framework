@@ -2,6 +2,8 @@
 
 This repository provides a reusable baseline to layer mandatory/platform add‑ons onto existing Kubernetes clusters (EKS/AKS/GKE) across `dev`, `stage`, and `prod`. It uses Helm (via Helmfile) and/or GitOps (Flux default; Argo CD optional) to install and configure ingress, certs, mesh, observability, and logging.
 
+**NEW:** Now includes **Terraform automation via Backstage** - provision infrastructure through a self-service UI instead of manual CLI commands. See [Terraform Automation Guide](docs/TERRAFORM_AUTOMATION.md).
+
 ## Structure
 - `clusters/<env>/` — Per‑environment orchestration via `helmfile.yaml` (default) and `values/*.yaml` for each addon; includes `kubeconfig.example`.
 - `platform/base/` — Namespaces, RBAC, and example network policies applied cluster‑wide.
@@ -182,8 +184,29 @@ flux reconcile helmrelease <name> -n <namespace>
 
 ## Additional Documentation
 
+- [Terraform Automation](docs/TERRAFORM_AUTOMATION.md) - **NEW!** Automate infrastructure deployment via Backstage UI
 - [Deployment Checklist](docs/DEPLOYMENT_CHECKLIST.md) - Complete pre and post-deployment verification
 - [Backstage Integration](docs/BACKSTAGE_INTEGRATION.md) - How to integrate Backstage with platform services
+
+## Terraform Infrastructure Automation
+
+This repo now includes complete Terraform automation:
+
+**What's included:**
+- GitHub Actions workflows for `terraform plan` (PR) and `terraform apply` (merge)
+- Backstage Software Template for self-service infrastructure provisioning
+- Multi-cloud support (Azure AKS, AWS EKS, GCP GKE)
+- Remote state management with Azure Storage backend
+- Automated PR creation and review workflow
+
+**Quick Start:**
+1. Configure Azure credentials in GitHub Secrets
+2. Set up remote state backend (see [Terraform Guide](docs/TERRAFORM_AUTOMATION.md))
+3. Navigate to http://localhost:3000/create in Backstage
+4. Select "Deploy AKS Service with Terraform"
+5. Fill the form and let automation handle the rest
+
+See [docs/TERRAFORM_AUTOMATION.md](docs/TERRAFORM_AUTOMATION.md) for complete setup instructions.
 
 ## Contributing
 - Add new addons under `platform/addons/<addon>/` with a base manifest and `values-example.yaml`.
