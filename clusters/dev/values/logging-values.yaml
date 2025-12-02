@@ -4,11 +4,13 @@
 
 elasticsearch:
   replicas: 1
-  minimumMasterNodes: 1
   
   # Single-node cluster configuration for dev
   clusterName: "elasticsearch"
   nodeGroup: "master"
+  
+  # CRITICAL: Set to empty array to prevent chart from setting initial_master_nodes
+  masterService: ""
   
   resources: {}
   
@@ -20,13 +22,16 @@ elasticsearch:
   
   esJavaOpts: "-Xmx512m -Xms512m"
   
-  # For single node, use single-node discovery
+  # For single node, use single-node discovery - override chart defaults
   esConfig:
     elasticsearch.yml: |
       cluster.name: "elasticsearch"
       network.host: 0.0.0.0
       discovery.type: single-node
       xpack.security.enabled: false
+  
+  # Disable these settings that conflict with single-node
+  clusterHealthCheckParams: ""
 
 kibana:
   service:
