@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backstage-config
+  namespace: backstage
+data:
+  app-config.yaml: |
+    app:
+      title: K8s Platform Portal
+      baseUrl: http://localhost:7007
+    
+    organization:
+      name: Platform Team
+    
+    backend:
+      baseUrl: http://localhost:7007
+      listen:
+        port: 7007
+      csp:
+        connect-src: ["'self'", 'http:', 'https:']
+      cors:
+        origin: http://localhost:7007
+        methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+        credentials: true
+      database:
+        client: better-sqlite3
+        connection: ':memory:'
+    
+    integrations:
+      github:
+        - host: github.com
+    
+    proxy:
+      '/prometheus':
+        target: 'http://kube-prometheus-stack-prometheus.monitoring.svc:9090'
+        changeOrigin: true
+      
+      '/grafana':
+        target: 'http://grafana.monitoring.svc'
+        changeOrigin: true
+    
+    kubernetes:
+      serviceLocatorMethod:
+        type: 'multiTenant'
+      clusterLocatorMethods:
+        - type: 'config'
+          clusters:
+            - url: https://kubernetes.default.svc
+              name: dev-cluster
+              authProvider: 'serviceAccount'
+              skipTLSVerify: false
+              skipMetricsLookup: false
+    
+    catalog:
+      import:
+        entityFilename: catalog-info.yaml
+      rules:
+        - allow: [Component, System, API, Resource, Location]
+      locations:
+        - type: file
+          target: /app/catalog/platform-services.yaml

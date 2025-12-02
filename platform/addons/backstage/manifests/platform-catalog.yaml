@@ -1,0 +1,96 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backstage-catalog
+  namespace: backstage
+data:
+  platform-services.yaml: |
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: System
+    metadata:
+      name: platform
+      title: K8s Platform Services
+      description: Core platform infrastructure services
+    spec:
+      owner: platform-team
+      domain: infrastructure
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: Component
+    metadata:
+      name: prometheus
+      title: Prometheus
+      description: Metrics collection and alerting
+      annotations:
+        backstage.io/kubernetes-id: kube-prometheus-stack-prometheus
+        backstage.io/kubernetes-namespace: monitoring
+        prometheus.io/rule: 'up{job="prometheus"}'
+    spec:
+      type: service
+      lifecycle: production
+      owner: platform-team
+      system: platform
+      providesApis: []
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: Component
+    metadata:
+      name: grafana
+      title: Grafana
+      description: Metrics visualization and dashboards
+      annotations:
+        backstage.io/kubernetes-id: grafana
+        backstage.io/kubernetes-namespace: monitoring
+        grafana/dashboard-selector: 'platform'
+    spec:
+      type: service
+      lifecycle: production
+      owner: platform-team
+      system: platform
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: Component
+    metadata:
+      name: istio
+      title: Istio Service Mesh
+      description: Service mesh for traffic management and security
+      annotations:
+        backstage.io/kubernetes-id: istiod
+        backstage.io/kubernetes-namespace: istio-system
+    spec:
+      type: service
+      lifecycle: production
+      owner: platform-team
+      system: platform
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: Component
+    metadata:
+      name: ingress-nginx
+      title: Ingress NGINX
+      description: Kubernetes ingress controller
+      annotations:
+        backstage.io/kubernetes-id: ingress-nginx-controller
+        backstage.io/kubernetes-namespace: ingress-nginx
+    spec:
+      type: service
+      lifecycle: production
+      owner: platform-team
+      system: platform
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: Component
+    metadata:
+      name: cert-manager
+      title: cert-manager
+      description: X.509 certificate management
+      annotations:
+        backstage.io/kubernetes-id: cert-manager
+        backstage.io/kubernetes-namespace: cert-manager
+    spec:
+      type: service
+      lifecycle: production
+      owner: platform-team
+      system: platform

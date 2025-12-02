@@ -1,0 +1,100 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backstage
+  namespace: backstage
+  labels:
+    app: backstage
+    app.kubernetes.io/name: backstage
+    app.kubernetes.io/part-of: platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backstage
+  template:
+    metadata:
+      labels:
+        app: backstage
+    spec:
+      serviceAccountName: backstage
+      containers:
+      - name: backstage
+        image: roadiehq/community-backstage-image:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 7007
+        env:
+        - name: APP_CONFIG_app_baseUrl
+          value: "http://localhost:7007"
+        - name: APP_CONFIG_backend_baseUrl
+          value: "http://localhost:7007"
+        - name: APP_CONFIG_backend_listen_port
+          value: "7007"
+        volumeMounts:
+        - name: app-config
+          mountPath: /app/app-config.production.yaml
+          subPath: app-config.yaml
+        - name: catalog
+          mountPath: /app/catalog
+        resources: {}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 7007
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 7007
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 3
+      volumes:
+      - name: app-config
+        configMap:
+          name: backstage-config
+      - name: catalog
+        configMap:
+          name: backstage-catalog
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backstage
+  namespace: backstage
+  labels:
+    app: backstage
+spec:
+  selector:
+    app: backstage
+  ports:
+  - name: http
+    port: 80
+    targetPort: 7007
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backstage
+  namespace: backstage
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: backstage.dev.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: backstage
+            port:
+              number: 80
