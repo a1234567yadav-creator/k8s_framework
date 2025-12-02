@@ -106,6 +106,7 @@ variable "vpcs" {
       az         = string
     }))
   }))
+  default = {}
 }
 
 variable "eks_clusters" {
@@ -128,6 +129,7 @@ variable "eks_clusters" {
     node_capacity_type       = optional(string)
     node_group_tags          = optional(map(string), {})
   }))
+  default = {}
 }
 
 variable "networks" {
@@ -135,6 +137,7 @@ variable "networks" {
   type = map(object({
     network_name = string
   }))
+  default = {}
 }
 
 variable "subnetworks" {
@@ -145,6 +148,7 @@ variable "subnetworks" {
     region          = string
     network_key     = string
   }))
+  default = {}
 }
 
 variable "gke_clusters" {
@@ -169,21 +173,25 @@ variable "gke_clusters" {
     logging_service               = optional(string, "logging.googleapis.com/kubernetes")
     monitoring_service            = optional(string, "monitoring.googleapis.com/kubernetes")
   }))
+  default = {}
 }
 
 variable "aws_region" {
   description = "AWS region"
   type        = string
+  default     = "us-east-1"
 }
 
 variable "gcp_project" {
   description = "GCP project ID"
   type        = string
+  default     = ""
 }
 
 variable "gcp_region" {
   description = "Default GCP region"
   type        = string
+  default     = "us-central1"
 }
 
 variable "azure_subscription_id" {
