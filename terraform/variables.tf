@@ -33,6 +33,7 @@ variable "aks_clusters" {
     azure_ad_integrated          = optional(bool, true)
     local_account_disabled       = optional(bool, false)
   }))
+  default = {}
 }
 
 variable "resource_groups" {
