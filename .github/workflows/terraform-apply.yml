@@ -53,24 +53,24 @@ jobs:
       
       - name: Terraform Plan
         run: |
-          terraform plan -var-file="hyperscalers.tfvars" -out=tfplan
+          terraform plan -var-file="hyperscalers.tfvars" -no-color 
         env:
           TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
           TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE_H).tenantId }}
       
-      - name: Terraform Apply
-        run: terraform apply -var-file="hyperscalers.tfvars" -auto-approve tfplan
-        env:
-          TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
-          TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE_H).tenantId }}
+      # - name: Terraform Apply
+      #   run: terraform apply -var-file="hyperscalers.tfvars" -auto-approve
+      #   env:
+      #     TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
+      #     TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE_H).tenantId }}
       
-      - name: Terraform Output
-        id: output
-        run: terraform output -json > terraform-outputs.json
+      # - name: Terraform Output
+      #   id: output
+      #   run: terraform output -json > terraform-outputs.json
       
-      - name: Upload Terraform Outputs
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-outputs
-          path: terraform/terraform-outputs.json
-          retention-days: 30
+      # - name: Upload Terraform Outputs
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: terraform-outputs
+      #     path: terraform/terraform-outputs.json
+      #     retention-days: 30
