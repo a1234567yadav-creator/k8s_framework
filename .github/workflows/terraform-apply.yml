@@ -43,7 +43,7 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE }}
+          creds: ${{ secrets.AZURE_H }}
       
       - name: Terraform Init
         run: terraform init
@@ -55,14 +55,14 @@ jobs:
         run: |
           terraform plan -out=tfplan
         env:
-          TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE).subscriptionId }}
-          TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE).tenantId }}
+          TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
+          TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE_H).tenantId }}
       
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
         env:
-          TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE).subscriptionId }}
-          TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE).tenantId }}
+          TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
+          TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE_H).tenantId }}
       
       - name: Terraform Output
         id: output

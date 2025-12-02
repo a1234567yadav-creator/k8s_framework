@@ -35,7 +35,7 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_H }}
       
       - name: Terraform Format Check
         id: fmt
@@ -55,8 +55,8 @@ jobs:
         run: |
           terraform plan -no-color -out=tfplan
         env:
-          TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
-          TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
+          TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
+          TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE_H).tenantId }}
         continue-on-error: true
       
       - name: Comment PR with Plan
