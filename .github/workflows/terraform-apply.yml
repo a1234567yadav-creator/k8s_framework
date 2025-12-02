@@ -63,7 +63,7 @@ jobs:
       
       - name: Terraform Plan
         run: |
-          terraform plan -var-file="hyperscalers.tfvars" -no-color 
+          terraform plan -var-file="hyperscalers.tfvars" -input=false -no-color -out=tfplan
         env:
           ARM_CLIENT_ID: ${{ fromJson(secrets.AZURE_H).clientId }}
           ARM_CLIENT_SECRET: ${{ fromJson(secrets.AZURE_H).clientSecret }}
