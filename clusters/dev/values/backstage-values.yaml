@@ -1,23 +1,65 @@
 # Backstage development environment configuration
-# Optimized for 4-core constraint
+# Integrated with K8s platform services
 
 # Disable PostgreSQL dependency and use SQLite for development
 postgresql:
   enabled: false
 
+# Service Account for Kubernetes access
+serviceAccount:
+  create: false
+  name: backstage
+
 backstage:
-  resources:
-    requests:
-      cpu: 100m     # Reduced for dev
-      memory: 256Mi
-    limits:
-      cpu: 300m
-      memory: 512Mi
+  resources: {}  # No resource constraints
   
-  # Dev-specific environment variables
-  extraEnvVars:
-    - name: NODE_ENV
-      value: "development"
+  # Platform integrations
+  appConfig:
+    app:
+      title: K8s Platform Portal
+      baseUrl: http://localhost:7007
+    
+    organization:
+      name: Platform Team
+    
+    backend:
+      baseUrl: http://localhost:7007
+      listen:
+        port: 7007
+      cors:
+        origin: http://localhost:7007
+      database:
+        client: better-sqlite3
+        connection: ':memory:'
+    
+    # Kubernetes integration
+    kubernetes:
+      serviceLocatorMethod:
+        type: 'multiTenant'
+      clusterLocatorMethods:
+        - type: 'config'
+          clusters:
+            - url: https://kubernetes.default.svc
+              name: dev-cluster
+              authProvider: 'serviceAccount'
+              skipTLSVerify: false
+    
+    # Prometheus integration
+    prometheus:
+      proxyUrl: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+    
+    # Grafana integration  
+    grafana:
+      domain: http://grafana.monitoring.svc
+      unifiedAlerting: true
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: nginx
+  host: backstage.dev.example.com
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     - name: LOG_LEVEL
       value: "debug"
     
