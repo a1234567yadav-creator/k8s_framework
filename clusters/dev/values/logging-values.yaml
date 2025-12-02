@@ -6,6 +6,10 @@ elasticsearch:
   replicas: 1
   minimumMasterNodes: 1
   
+  # Single-node cluster configuration for dev
+  clusterName: "elasticsearch"
+  nodeGroup: "master"
+  
   resources: {}
   
   volumeClaimTemplate:
@@ -15,6 +19,14 @@ elasticsearch:
         storage: 10Gi
   
   esJavaOpts: "-Xmx512m -Xms512m"
+  
+  # For single node, use single-node discovery
+  esConfig:
+    elasticsearch.yml: |
+      cluster.name: "elasticsearch"
+      network.host: 0.0.0.0
+      discovery.type: single-node
+      xpack.security.enabled: false
 
 kibana:
   service:
