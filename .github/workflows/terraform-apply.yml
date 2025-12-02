@@ -46,7 +46,7 @@ jobs:
           creds: ${{ secrets.AZURE_H }}
       
       - name: Terraform Init
-        run: terraform init -backend=false
+        run: terraform init
       
       - name: Terraform Validate
         run: terraform validate
