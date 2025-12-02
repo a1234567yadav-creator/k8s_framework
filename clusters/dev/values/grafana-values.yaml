@@ -1,7 +1,14 @@
 # Grafana Configuration for dev
 # Resource constraints removed - Kubernetes will auto-manage
 adminUser: admin
-adminPassword: CHANGEME
+adminPassword: ChangeMe123!
+
+# Enable iframe embedding for Backstage integration
+grafana.ini:
+  security:
+    allow_embedding: true
+    cookie_samesite: none
+    cookie_secure: false
 
 datasources:
   datasources.yaml:
@@ -9,9 +16,11 @@ datasources:
     datasources:
     - name: Prometheus
       type: prometheus
-      url: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+      url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
       access: proxy
       isDefault: true
+      jsonData:
+        timeInterval: 30s
 
 persistence:
   enabled: true

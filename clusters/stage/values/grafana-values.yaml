@@ -1,5 +1,5 @@
 adminUser: admin
-adminPassword: CHANGEME
+adminPassword: ChangeMe123!
 ingress:
   enabled: true
   hosts:

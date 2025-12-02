@@ -31,15 +31,19 @@ data:
       github:
         - host: github.com
     
+    # Enable proxy endpoints for Prometheus and Grafana
     proxy:
-      '/prometheus':
-        target: 'http://kube-prometheus-stack-prometheus.monitoring.svc:9090'
+      '/prometheus/api':
+        target: 'http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/'
         changeOrigin: true
+        pathRewrite:
+          '^/api/proxy/prometheus/api': '/'
       
-      '/grafana':
-        target: 'http://grafana.monitoring.svc'
+      '/grafana/api':
+        target: 'http://grafana.monitoring.svc.cluster.local:80'
         changeOrigin: true
     
+    # Kubernetes plugin configuration
     kubernetes:
       serviceLocatorMethod:
         type: 'multiTenant'
@@ -52,11 +56,18 @@ data:
               skipTLSVerify: false
               skipMetricsLookup: false
     
+    # Catalog configuration
     catalog:
       import:
         entityFilename: catalog-info.yaml
       rules:
-        - allow: [Component, System, API, Resource, Location]
+        - allow: [Component, System, API, Resource, Location, Domain, Group, User]
       locations:
         - type: file
           target: /app/catalog/platform-services.yaml
+      providers:
+        microsoftGraphOrg:
+          default:
+            tenantId: ${AZURE_TENANT_ID}
+            clientId: ${AZURE_CLIENT_ID}
+            clientSecret: ${AZURE_CLIENT_SECRET}

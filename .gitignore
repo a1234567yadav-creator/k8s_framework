@@ -24,3 +24,6 @@ __pycache__/
 # Helm
 charts/
 *.tgz
+
+# Backstage local development (don't push to GitHub)
+backstage-hexaware/
