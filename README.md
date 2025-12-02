@@ -182,7 +182,7 @@ flux reconcile helmrelease <name> -n <namespace>
 - Prometheus/Grafana: verify pods in `monitoring`; expose Grafana via ingress host from `clusters/<env>/values/grafana-values.yaml`.
 - Logging: confirm `elasticsearch`/`kibana`/`fluent-bit` pods in `logging`; port‑forward Kibana if needed.
 
-## Additional Documentation
+## Additional Documentation ##
 
 - [Terraform Automation](docs/TERRAFORM_AUTOMATION.md) - **NEW!** Automate infrastructure deployment via Backstage UI
 - [Deployment Checklist](docs/DEPLOYMENT_CHECKLIST.md) - Complete pre and post-deployment verification
