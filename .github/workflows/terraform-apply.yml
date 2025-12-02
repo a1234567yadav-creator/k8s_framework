@@ -47,14 +47,28 @@ jobs:
       
       - name: Terraform Init
         run: terraform init
+        env:
+          ARM_CLIENT_ID: ${{ fromJson(secrets.AZURE_H).clientId }}
+          ARM_CLIENT_SECRET: ${{ fromJson(secrets.AZURE_H).clientSecret }}
+          ARM_SUBSCRIPTION_ID: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
+          ARM_TENANT_ID: ${{ fromJson(secrets.AZURE_H).tenantId }}
       
       - name: Terraform Validate
         run: terraform validate
+        env:
+          ARM_CLIENT_ID: ${{ fromJson(secrets.AZURE_H).clientId }}
+          ARM_CLIENT_SECRET: ${{ fromJson(secrets.AZURE_H).clientSecret }}
+          ARM_SUBSCRIPTION_ID: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
+          ARM_TENANT_ID: ${{ fromJson(secrets.AZURE_H).tenantId }}
       
       - name: Terraform Plan
         run: |
           terraform plan -var-file="hyperscalers.tfvars" -no-color 
         env:
+          ARM_CLIENT_ID: ${{ fromJson(secrets.AZURE_H).clientId }}
+          ARM_CLIENT_SECRET: ${{ fromJson(secrets.AZURE_H).clientSecret }}
+          ARM_SUBSCRIPTION_ID: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
+          ARM_TENANT_ID: ${{ fromJson(secrets.AZURE_H).tenantId }}
           TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
           TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE_H).tenantId }}
       
