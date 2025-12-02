@@ -26,5 +26,8 @@ charts/
 *.tgz
 
 # Backstage local development (don't push to GitHub)
-backstage-hexaware/
+backstage-hexaware/*
+# But keep templates and catalog config
+!backstage-hexaware/examples/
+!backstage-hexaware/app-config*.yaml
 terraform/.terraform/
