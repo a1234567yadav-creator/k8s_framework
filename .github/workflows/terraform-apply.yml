@@ -46,20 +46,20 @@ jobs:
           creds: ${{ secrets.AZURE_H }}
       
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -backend=false
       
       - name: Terraform Validate
         run: terraform validate
       
       - name: Terraform Plan
         run: |
-          terraform plan -out=tfplan
+          terraform plan -var-file="hyperscalers.tfvars" -out=tfplan
         env:
           TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
           TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE_H).tenantId }}
       
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -var-file="hyperscalers.tfvars" -auto-approve tfplan
         env:
           TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
           TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE_H).tenantId }}

@@ -44,7 +44,7 @@ jobs:
       
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: terraform init -backend=false
       
       - name: Terraform Validate
         id: validate
@@ -53,7 +53,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          terraform plan -no-color -out=tfplan
+          terraform plan -var-file="hyperscalers.tfvars" -no-color -out=tfplan
         env:
           TF_VAR_azure_subscription_id: ${{ fromJson(secrets.AZURE_H).subscriptionId }}
           TF_VAR_azure_tenant_id: ${{ fromJson(secrets.AZURE_H).tenantId }}
